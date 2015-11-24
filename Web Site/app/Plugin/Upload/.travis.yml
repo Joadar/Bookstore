@@ -1,0 +1,28 @@
+language: php
+
+php:
+    - 5.3
+    - 5.4
+
+env:
+    - CAKE_VERSION=master
+
+before_script:
+    - git clone --depth 1 --branch $CAKE_VERSION git://github.com/cakephp/cakephp ../cakephp && cd ../cakephp
+    - mv ../CakePHP-Upload app/Plugin/Upload
+    - chmod -R 777 app/tmp
+    - chmod -R 777 app/webroot
+    - sh -c "mysql -e 'CREATE DATABASE cakephp_test;'"
+    - echo "<?php
+        class DATABASE_CONFIG {
+        public \$test = array(
+            'datasource' => 'Database/Mysql',
+            'database' => 'cakephp_test',
+            'host' => '127.0.0.1',
+            'login' => 'travis',
+            'persistent' => false,
+        );
+        }" > app/Config/database.php
+
+script:
+    - ./lib/Cake/Console/cake test Upload Model/Behavior/UploadBehavior --stderr

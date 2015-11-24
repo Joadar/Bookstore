@@ -1,0 +1,15 @@
+body > div.container{padding-top: 60px;}
+.center{text-align: center;}
+.add{width: 310px; margin: 0 auto;}
+.book_index{margin-bottom: 10px; padding-bottom:10px; border-bottom:1px dashed black;}
+
+.cart_header{margin-bottom: 25px; font-size:16pt;}
+
+.float_right{float:right; text-align: right;}
+
+.form_comment{display:none;}
+.show_comment img{height:14px;}
+
+.author_name{ text-decoration: underline; color: #999; font-style: italic;}
+
+.form_search{margin-top: 12px;}
