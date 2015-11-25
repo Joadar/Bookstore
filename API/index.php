@@ -13,12 +13,18 @@
     $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
 
+    /**
+     * OTHER
+     */
+
+    $image_root = "http://localhost/Projects/Bookstore/Web%20Site";
+
 
     /**
      * USERS
      */
 
-    // get all users - OK
+    // get all users
     Flight::route("GET /users", function() use($connection){
 
         $result = $connection->prepare("SELECT id, username, email, sexe, active, admin FROM users");
@@ -162,7 +168,7 @@
 
 
     /**
-     * AUTHORS - OK
+     * AUTHORS
      */
 
     // get all authors
@@ -337,25 +343,28 @@
 
 
     /**
-     * BOOKS - OK
+     * BOOKS
      */
 
     // get all books
-    Flight::route("GET /books", function() use($connection){
+    Flight::route("GET /books", function() use($connection, $image_root){
 
-        $result = $connection->prepare("SELECT * FROM books");
+        $result = $connection->prepare("SELECT title, author_id, description, editor, collection, pages, published, genre, language, CONCAT(:image_root, image) as image FROM books");
+        $result->bindParam(':image_root', $image_root);
         $result->execute();
 
         $return = $result->fetchAll(PDO::FETCH_CLASS);
+
         Flight::json($return); // return array of objects
 
     });
 
     // get book by id
-    Flight::route("GET /books/@book_id", function($book_id) use($connection){
-        $result = $connection->prepare("SELECT * FROM books WHERE id = :book_id");
+    Flight::route("GET /books/@book_id", function($book_id) use($connection, $image_root){
+        $result = $connection->prepare("SELECT title, author_id, description, editor, collection, pages, published, genre, language, CONCAT(:image_root, image) as image FROM books WHERE id = :book_id");
         $result->execute(
             array(
+                ":image_root" => $image_root,
                 ":book_id" => $book_id
             )
         );
@@ -369,6 +378,7 @@
         }
 
         Flight::json($return);
+
     });
 
     // update book by id
@@ -396,11 +406,12 @@
         );
 
        Flight::json($return);
+
     });
 
 
     /**
-    * COMMENTS - OK
+    * COMMENTS
     */
 
     // get all comments from a book
