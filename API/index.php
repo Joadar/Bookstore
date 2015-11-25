@@ -1,6 +1,7 @@
 <?php
     require 'flight/Flight.php';
 
+
     /**
      * DATABASE CONNECTION
      */
@@ -12,6 +13,7 @@
     $connection = new PDO("mysql:host=localhost;dbname=$dbname", $dbuser, $dbpwd);
     $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+
 
     /**
      * OTHER
@@ -49,6 +51,18 @@
         return $path;
     }
 
+    // method to generate token
+    function generateToken($length = 16){
+        // generate a random string
+        $token = openssl_random_pseudo_bytes($length);
+
+        // convert the binary data into hexadecimal representation
+        $token = bin2hex($token);
+
+        // return it out
+        return $token;
+    }
+
 
     /**
      * USERS
@@ -69,7 +83,7 @@
     // get user by id
     Flight::route("GET /users/@user_id", function($user_id) use($connection){
 
-        $result = $connection->prepare("SELECT id, username, email, sexe, active, admin FROM users WHERE id = :user_id");
+        $result = $connection->prepare("SELECT id, username, token, email, sexe, active, admin FROM users WHERE id = :user_id");
         $result->execute(
             array(
                 ":user_id" => $user_id
@@ -112,11 +126,12 @@
 
     // add new user
     Flight::route("POST /users", function() use($connection){
-        $result = $connection->prepare("INSERT INTO users(username, password, email, sexe) VALUES(:username, :password, :email, :sexe)");
+        $result = $connection->prepare("INSERT INTO users(username, password, token, email, sexe) VALUES(:username, :password, :token, :email, :sexe)");
         $result->execute(
             array(
                 ":username"     => Flight::request()->data->username,
                 ":password"     => sha1(md5(Flight::request()->data->password)),
+                ":token"        => generateToken(),
                 ":email"        => Flight::request()->data->email,
                 ":sexe"         => Flight::request()->data->sexe
             )
@@ -141,7 +156,7 @@
     // login user
     Flight::route("POST /users/login", function() use($connection){
 
-        $result = $connection->prepare("SELECT id FROM users WHERE username = :username AND password = :password");
+        $result = $connection->prepare("SELECT id, username, token, email, sexe, active, admin FROM users WHERE username = :username AND password = :password");
         $result->execute(
             array(
                 ":username" => Flight::request()->data->username,
@@ -150,12 +165,7 @@
         );
 
         $return = $result->fetch(PDO::FETCH_ASSOC);
-        if($return){
-            $return = array(
-                "success" => true,
-                "message" => "Login successful"
-            );
-        } else {
+        if($return == false){
             $return = array(
                 "success" => false,
                 "message" => "Can't login"
@@ -167,16 +177,15 @@
     });
 
     // update user (own account)
-    // TODO: add token to user
-    /* Flight::route("PUT /users/@user_id?token=@user_token", function($user_id, $user_token) use($connection){
+    Flight::route("PUT /users/@user_id", function($user_id) use($connection){
 
         $result = $connection->prepare("UPDATE users SET username = :username, password = :password WHERE id = :user_id AND token =:user_token");
         $result->execute(
             array(
                 ":username" => Flight::request()->data->username,
-                ":username" => Flight::request()->data->password,
+                ":password" => sha1(md5(Flight::request()->data->password)),
                 ":user_id" => $user_id,
-                ":user_token" => $user_token
+                ":user_token" => Flight::request()->data->token
             )
         );
 
@@ -194,7 +203,7 @@
 
         Flight::json($return);
 
-    });*/
+    });
 
 
     /**
@@ -460,7 +469,9 @@
                 "message" => "No comments for this book"
             );
         }
-        Flight::json($return); // return array of objects
+
+        Flight::json($return);
+
     });
 
     // get comment by id and by book
@@ -480,7 +491,9 @@
                 "message" => "The comment doesn't exist"
             );
         }
-        Flight::json($return); // return object
+
+        Flight::json($return);
+
     });
 
     // add a new comment
@@ -573,7 +586,6 @@
      */
 
     Flight::start();
-
 
 
 ?>
