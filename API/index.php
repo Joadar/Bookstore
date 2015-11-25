@@ -17,7 +17,37 @@
      * OTHER
      */
 
-    $image_root = "http://localhost/Projects/Bookstore/Web%20Site";
+    $web_image_root = "http://localhost/Projects/Bookstore/Web%20Site";
+    $local_image_root = "/Users/Jonathan/Lab/Web/Projects/Bookstore/Web Site/app/webroot";
+
+    // method to save and update image on the folder
+    function saveImageOnFolder($connection, $local_image_root, $update){
+        $books = $connection->prepare("SELECT * FROM books");
+        $books->execute();
+        $resultBooks = $books->fetchAll(PDO::FETCH_ASSOC);
+        $image_name = count($resultBooks) + 1 . ".jpg";
+
+        if($update) {
+            // remove old versions
+            foreach (glob($local_image_root."/img/books/1/".count($resultBooks)."*.jpg") as $filename) {
+                unlink($filename);
+            }
+            $image_name = count($resultBooks) . ".jpg";
+        }
+
+
+        $path = "/img/books/1/".$image_name;
+
+        //Get the file
+        $content = file_get_contents(Flight::request()->data->image);
+
+        //Store in the filesystem.
+        $fp = fopen($local_image_root.$path, "w");
+        fwrite($fp, $content);
+        fclose($fp);
+
+        return $path;
+    }
 
 
     /**
@@ -227,9 +257,10 @@
     });
 
     // add a new book
-    Flight::route("POST /authors/@author_id/books", function($author_id) use($connection){
+    Flight::route("POST /authors/@author_id/books", function($author_id) use($connection, $local_image_root){
 
-        $result = $connection->prepare("INSERT INTO books(title, author_id, description, editor, collection, pages, published, genre, language, image) VALUES (:title, :author_id, :description, :editor, :collection, :pages, :published, :genre, :language, :image)");
+        $result = $connection->prepare("INSERT INTO books(title, author_id, description, editor, collection, pages, published, genre, image) VALUES (:title, :author_id, :description, :editor, :collection, :pages, :published, :genre, :image)");
+
         $result->execute(
             array(
                 ":title"        => Flight::request()->data->title,
@@ -240,16 +271,15 @@
                 ":pages"        => Flight::request()->data->pages,
                 ":published"    => Flight::request()->data->published,
                 ":genre"        => Flight::request()->data->genre,
-                ":language"     => Flight::request()->data->language,
-                ":image"        => Flight::request()->data->image
+                ":image"        => saveImageOnFolder($connection, $local_image_root, false)
             )
         );
 
         $status = false;
-        $message = "Impossible to add this author";
+        $message = "Impossible to add this book";
         if($result->rowCount() == 1) {
             $status = true;
-            $message = "Author added";
+            $message = "Book added";
         }
 
         $return = array(
@@ -347,10 +377,10 @@
      */
 
     // get all books
-    Flight::route("GET /books", function() use($connection, $image_root){
+    Flight::route("GET /books", function() use($connection, $web_image_root){
 
-        $result = $connection->prepare("SELECT title, author_id, description, editor, collection, pages, published, genre, language, CONCAT(:image_root, image) as image FROM books");
-        $result->bindParam(':image_root', $image_root);
+        $result = $connection->prepare("SELECT title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, image) as image FROM books");
+        $result->bindParam(':web_image_root', $web_image_root);
         $result->execute();
 
         $return = $result->fetchAll(PDO::FETCH_CLASS);
@@ -360,11 +390,11 @@
     });
 
     // get book by id
-    Flight::route("GET /books/@book_id", function($book_id) use($connection, $image_root){
-        $result = $connection->prepare("SELECT title, author_id, description, editor, collection, pages, published, genre, language, CONCAT(:image_root, image) as image FROM books WHERE id = :book_id");
+    Flight::route("GET /books/@book_id", function($book_id) use($connection, $web_image_root){
+        $result = $connection->prepare("SELECT title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, image) as image FROM books WHERE id = :book_id");
         $result->execute(
             array(
-                ":image_root" => $image_root,
+                ":web_image_root" => $web_image_root,
                 ":book_id" => $book_id
             )
         );
@@ -373,7 +403,7 @@
         if($return == false){
             $return = array(
                 "success" => false,
-                "message" => "The book doesn't exist"
+                "message" => "This book doesn't exist"
             );
         }
 
@@ -382,19 +412,19 @@
     });
 
     // update book by id
-    Flight::route("PUT /books/@book_id", function($book_id) use($connection){
+    Flight::route("PUT /books/@book_id", function($book_id) use($connection, $local_image_root){
 
         $result = $connection->prepare("UPDATE books SET description = :description, image = :image WHERE id = :book_id");
         $result->execute(
             array(
                 ":description"  => Flight::request()->data->description,
-                ":image"        => Flight::request()->data->image,
+                ":image"        => saveImageOnFolder($connection, $local_image_root, true),
                 ":book_id"      => $book_id
             )
         );
 
         $status = false;
-        $message = "Impossible to update the book";
+        $message = "Impossible to update this book";
         if($result->rowCount() == 1) {
             $status = true;
             $message = "Book updated";
