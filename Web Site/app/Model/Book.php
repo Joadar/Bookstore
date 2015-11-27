@@ -30,7 +30,7 @@
 			'published' => 'notEmpty',
 			'genre' => 'notEmpty',
 			'language' => 'notEmpty',
-			'picture_file' => array(
+			'image_file' => array(
 		        'rule' => array('fileExtension', array('jpg','png'))
 		    )
 		);
