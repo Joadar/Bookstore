@@ -117,6 +117,9 @@ public interface RestInterface {
      * COMMENTS
      */
 
+    @GET("/comments")
+    Call<List<Comment>> listComments();
+
     @GET("/books/{id}/comments")
     Call<List<Comment>> listCommentsByBook(
         @Path("id") int id

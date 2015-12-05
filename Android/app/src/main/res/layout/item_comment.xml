@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.v7.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <RelativeLayout
+            android:id="@+id/user_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/item_comment_user_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="From:"/>
+
+            <TextView
+                android:id="@+id/item_comment_user"
+                android:layout_toRightOf="@id/item_comment_user_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/book_layout"
+            android:layout_below="@id/user_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/item_comment_book_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="About:" />
+
+            <TextView
+                android:id="@+id/item_comment_book"
+                android:layout_toRightOf="@id/item_comment_book_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/comment_layout"
+            android:layout_below="@id/book_layout"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/item_comment_content_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="His review:"/>
+
+            <TextView
+                android:id="@+id/item_comment_content"
+                android:layout_toRightOf="@id/item_comment_content_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+</android.support.v7.widget.CardView>

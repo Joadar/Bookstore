@@ -8,4 +8,12 @@
         <item name="colorAccent">@color/colorAccent</item>
     </style>
 
+    <style name="Bookstore" parent="AppTheme"/>
+
+    <style name="titleH1">
+        <item name="android:textSize">16dp</item>
+        <item name="android:padding">16dp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
 </resources>

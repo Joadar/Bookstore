@@ -20,6 +20,10 @@ public class CommentService {
         restInterface = retrofit.create(RestInterface.class);
     }
 
+    public void getComments(Callback callback){
+        restInterface.listComments().enqueue(callback);
+    }
+
     public void getCommentsByBook(int bookId, Callback callback){
         restInterface.listCommentsByBook(bookId).enqueue(callback);
     }
