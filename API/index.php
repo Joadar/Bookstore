@@ -8,7 +8,7 @@
 
     $dbname = "bookstore"; // database name
     $dbuser = "root"; // database user
-    $dbpwd = "root"; // database password
+    $dbpwd = "raspberry"; // database password
 
     $connection = new PDO("mysql:host=localhost;dbname=$dbname", $dbuser, $dbpwd);
     $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
@@ -63,6 +63,18 @@
         return $token;
     }
 
+    /**
+     * MAIN
+     */
+
+    Flight::route("GET /", function(){
+        $return = array(
+            "success" => false
+        );
+
+        Flight::json($return);
+    });
+
 
     /**
      * USERS
@@ -71,10 +83,13 @@
     // get all users
     Flight::route("GET /users", function() use($connection){
 
-        $result = $connection->prepare("SELECT id, username, email, sexe, active, admin FROM users");
+        $result = $connection->prepare("SELECT id, username, token, email, sexe, active, admin FROM users");
         $result->execute();
 
         $return = $result->fetchAll(PDO::FETCH_CLASS);
+        //$return = array(
+          //  "hello" => "world"
+        //);
 
         Flight::json($return);
 
@@ -388,11 +403,31 @@
     // get all books
     Flight::route("GET /books", function() use($connection, $web_image_root){
 
-        $result = $connection->prepare("SELECT title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, image) as image FROM books");
+        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, image) as image, a.firstname, a.lastname, a.biography FROM books, authors a WHERE books.author_id = a.id");
         $result->bindParam(':web_image_root', $web_image_root);
         $result->execute();
 
-        $return = $result->fetchAll(PDO::FETCH_CLASS);
+        $return = array();
+
+        while($row = $result->fetch(PDO::FETCH_ASSOC)){
+            $return[] = array(
+                "id"            => intval($row["id"]),
+                "title"         => $row["title"],
+                "author"        => array(
+                        "id"        => intval($row["author_id"]),
+                        "firstname" => $row["firstname"],
+                        "lastname"  => $row["lastname"],
+                        "biography" => $row["biography"]
+                ),
+                "description"   => $row["description"],
+                "editor"        => $row["editor"],
+                "collection"    => $row["collection"],
+                "pages"         => intval($row["pages"]),
+                "published"     => $row["published"],
+                "genre"         => $row["genre"],
+                "image"         => $row["image"]
+            );
+        }
 
         Flight::json($return); // return array of objects
 
@@ -400,7 +435,7 @@
 
     // get book by id
     Flight::route("GET /books/@book_id", function($book_id) use($connection, $web_image_root){
-        $result = $connection->prepare("SELECT title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, image) as image FROM books WHERE id = :book_id");
+        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, image) as image, a.firstname, a.lastname, a.biography FROM books, authors a WHERE books.author_id = a.id AND books.id = :book_id");
         $result->execute(
             array(
                 ":web_image_root" => $web_image_root,
@@ -413,6 +448,24 @@
             $return = array(
                 "success" => false,
                 "message" => "This book doesn't exist"
+            );
+        } else {
+            $return = array(
+                "id"            => intval($return["id"]),
+                "title"         => $return["title"],
+                "author"        => array(
+                    "id"        => intval($return["author_id"]),
+                    "firstname" => $return["firstname"],
+                    "lastname"  => $return["lastname"],
+                    "biography" => $return["biography"]
+                ),
+                "description"   => $return["description"],
+                "editor"        => $return["editor"],
+                "collection"    => $return["collection"],
+                "pages"         => intval($return["pages"]),
+                "published"     => $return["published"],
+                "genre"         => $return["genre"],
+                "image"         => $return["image"]
             );
         }
 
@@ -455,20 +508,61 @@
 
     // get all comments from a book
     Flight::route("GET /books/@book_id/comments", function($book_id) use($connection){
-        $result = $connection->prepare("SELECT * FROM comments WHERE book_id = :book_id");
+        $result = $connection->prepare("SELECT co.id as comment_id, co.user_id, co.book_id, u.username, u.token, u.email, u.sexe, u.active, u.admin, co.content, co.rating, co.created, b.title, b.author_id, b.description, b.editor, b.collection, b.pages, b.published, b.genre, b.image, a.firstname, a.lastname, a.biography
+                                        FROM comments co, users u, books b, authors a
+                                        WHERE co.user_id  = u.id
+                                        AND co.book_id    = b.id
+                                        AND b.author_id   = a.id
+                                        AND co.book_id    = :book_id");
         $result->execute(
             array(
                 ":book_id" => $book_id
             )
         );
 
-        $return = $result->fetchAll(PDO::FETCH_CLASS);
-        if(empty($return)) {
+        //$return = $result->fetchAll(PDO::FETCH_CLASS);
+        /*if(empty($return)) {
             $return = array(
                 "success" => false,
                 "message" => "No comments for this book"
             );
-        }
+        } else {*/
+            $return = array();
+            while($row = $result->fetch(PDO::FETCH_ASSOC)){
+                $return[] = array(
+                    "id"        => intval($row["comment_id"]),
+                    "user"      => array(
+                        "id"            => intval($row["user_id"]),
+                        "username"      => $row["username"],
+                        "token"         => $row["token"],
+                        "email"         => $row["email"],
+                        "sexe"          => $row["sexe"],
+                        "active"        => $row["active"],
+                        "admin"         => $row["admin"]
+                    ),
+                    "book"      => array(
+                        "id"            => intval($row["book_id"]),
+                        "title"         => $row["title"],
+                        "author"        => array(
+                            "id"            => intval($row["author_id"]),
+                            "firstname"     => $row["firstname"],
+                            "lastname"      => $row["lastname"],
+                            "biography"     => $row["biography"]
+                        ),
+                        "description"   => $row["description"],
+                        "editor"        => $row["editor"],
+                        "collection"    => $row["collection"],
+                        "pages"         => intval($row["pages"]),
+                        "published"     => $row["published"],
+                        "genre"         => $row["genre"],
+                        "image"         => $row["image"]
+                    ),
+                    "content"   => $row["content"],
+                    "rating"    => intval($row["rating"]),
+                    "created"   => $row["created"]
+                );
+            }
+        //}
 
         Flight::json($return);
 
