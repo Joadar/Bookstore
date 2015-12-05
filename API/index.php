@@ -19,8 +19,8 @@
      * OTHER
      */
 
-    $web_image_root = "http://localhost/Projects/Bookstore/Web%20Site";
-    $local_image_root = "/Users/Jonathan/Lab/Web/Projects/Bookstore/Web Site/app/webroot";
+    $web_image_root = "http://192.168.0.23/Web%20Site";
+    $local_image_root = "/Web Site/app/webroot";
 
     // method to save and update image on the folder
     function saveImageOnFolder($connection, $local_image_root, $update){
@@ -506,9 +506,61 @@
     * COMMENTS
     */
 
+    // get all comments
+    Flight::route("GET /comments", function() use($connection, $web_image_root){
+        $result = $connection->prepare("SELECT co.id as comment_id, co.user_id, co.book_id, u.username, u.token, u.email, u.sexe, u.active, u.admin, co.content, co.rating, co.created, b.title, b.author_id, b.description, b.editor, b.collection, b.pages, b.published, b.genre, CONCAT(:web_image_root, b.image) as image, a.firstname, a.lastname, a.biography
+                                        FROM comments co, users u, books b, authors a
+                                        WHERE co.user_id  = u.id
+                                        AND co.book_id    = b.id
+                                        AND b.author_id   = a.id");
+        $result->execute(
+            array(
+                ":web_image_root" => $web_image_root
+            )
+        );
+
+        while($row = $result->fetch(PDO::FETCH_ASSOC)) {
+            $return[] = array(
+                "id" => intval($row["comment_id"]),
+                "user" => array(
+                    "id" => intval($row["user_id"]),
+                    "username" => $row["username"],
+                    "token" => $row["token"],
+                    "email" => $row["email"],
+                    "sexe" => $row["sexe"],
+                    "active" => $row["active"],
+                    "admin" => $row["admin"]
+                ),
+                "book" => array(
+                    "id" => intval($row["book_id"]),
+                    "title" => $row["title"],
+                    "author" => array(
+                        "id" => intval($row["author_id"]),
+                        "firstname" => $row["firstname"],
+                        "lastname" => $row["lastname"],
+                        "biography" => $row["biography"]
+                    ),
+                    "description" => $row["description"],
+                    "editor" => $row["editor"],
+                    "collection" => $row["collection"],
+                    "pages" => intval($row["pages"]),
+                    "published" => $row["published"],
+                    "genre" => $row["genre"],
+                    "image" => $row["image"]
+                ),
+                "content" => $row["content"],
+                "rating" => intval($row["rating"]),
+                "created" => $row["created"]
+            );
+        }
+
+        Flight::json($return);
+
+    });
+
     // get all comments from a book
-    Flight::route("GET /books/@book_id/comments", function($book_id) use($connection){
-        $result = $connection->prepare("SELECT co.id as comment_id, co.user_id, co.book_id, u.username, u.token, u.email, u.sexe, u.active, u.admin, co.content, co.rating, co.created, b.title, b.author_id, b.description, b.editor, b.collection, b.pages, b.published, b.genre, b.image, a.firstname, a.lastname, a.biography
+    Flight::route("GET /books/@book_id/comments", function($book_id) use($connection, $web_image_root){
+        $result = $connection->prepare("SELECT co.id as comment_id, co.user_id, co.book_id, u.username, u.token, u.email, u.sexe, u.active, u.admin, co.content, co.rating, co.created, b.title, b.author_id, b.description, b.editor, b.collection, b.pages, b.published, b.genre, CONCAT(:web_image_root, b.image) as image, a.firstname, a.lastname, a.biography
                                         FROM comments co, users u, books b, authors a
                                         WHERE co.user_id  = u.id
                                         AND co.book_id    = b.id
@@ -516,9 +568,46 @@
                                         AND co.book_id    = :book_id");
         $result->execute(
             array(
-                ":book_id" => $book_id
+                ":book_id" => $book_id,
+                ":web_image_root" => $web_image_root
             )
         );
+
+        $return = array();
+        while($row = $result->fetch(PDO::FETCH_ASSOC)){
+            $return[] = array(
+                "id"        => intval($row["comment_id"]),
+                "user"      => array(
+                    "id"            => intval($row["user_id"]),
+                    "username"      => $row["username"],
+                    "token"         => $row["token"],
+                    "email"         => $row["email"],
+                    "sexe"          => $row["sexe"],
+                    "active"        => $row["active"],
+                    "admin"         => $row["admin"]
+                ),
+                "book"      => array(
+                    "id"            => intval($row["book_id"]),
+                    "title"         => $row["title"],
+                    "author"        => array(
+                        "id"            => intval($row["author_id"]),
+                        "firstname"     => $row["firstname"],
+                        "lastname"      => $row["lastname"],
+                        "biography"     => $row["biography"]
+                    ),
+                    "description"   => $row["description"],
+                    "editor"        => $row["editor"],
+                    "collection"    => $row["collection"],
+                    "pages"         => intval($row["pages"]),
+                    "published"     => $row["published"],
+                    "genre"         => $row["genre"],
+                    "image"         => $row["image"]
+                ),
+                "content"   => $row["content"],
+                "rating"    => intval($row["rating"]),
+                "created"   => $row["created"]
+            );
+        }
 
         //$return = $result->fetchAll(PDO::FETCH_CLASS);
         /*if(empty($return)) {
