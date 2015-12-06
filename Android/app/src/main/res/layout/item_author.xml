@@ -5,14 +5,22 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <ImageView
+        android:id="@+id/item_author_image"
+        android:layout_width="125dp"
+        android:layout_height="150dp"
+        android:scaleType="fitXY" />
+
     <TextView
         android:id="@+id/item_author_firstname"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
 
     <TextView
         android:id="@+id/item_author_lastname"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        android:gravity="center"/>
 
 </LinearLayout>

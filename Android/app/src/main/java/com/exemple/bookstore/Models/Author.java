@@ -9,12 +9,14 @@ public class Author {
     private String  firstname;
     private String  lastname;
     private String  biography;
+    private String  image;
 
-    public Author(int id, String firstname, String lastname, String biography) {
-        this.id = id;
-        this.firstname = firstname;
-        this.lastname = lastname;
-        this.biography = biography;
+    public Author(int id, String firstname, String lastname, String biography, String image) {
+        this.id         = id;
+        this.firstname  = firstname;
+        this.lastname   = lastname;
+        this.biography  = biography;
+        this.image      = image;
     }
 
     public int getId() {
@@ -47,5 +49,13 @@ public class Author {
 
     public void setBiography(String biography) {
         this.biography = biography;
+    }
+
+    public String getImage() {
+        return image;
+    }
+
+    public void setImage(String image) {
+        this.image = image;
     }
 }

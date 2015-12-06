@@ -5,10 +5,12 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.exemple.bookstore.Models.Author;
 import com.exemple.bookstore.R;
+import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
@@ -41,6 +43,10 @@ public class AuthorRecyclerAdapter extends RecyclerView.Adapter<AuthorRecyclerAd
 
         holder.firstname.setText(current.getFirstname());
         holder.lastname.setText(current.getLastname());
+
+        Picasso.with(context)
+                .load(current.getImage())
+                .into(holder.image);
     }
 
     @Override
@@ -52,11 +58,13 @@ public class AuthorRecyclerAdapter extends RecyclerView.Adapter<AuthorRecyclerAd
 
         public TextView firstname;
         public TextView lastname;
+        public ImageView image;
 
         public AuthorHolder(View itemView){
             super(itemView);
             firstname = (TextView) itemView.findViewById(R.id.item_author_firstname);
             lastname = (TextView) itemView.findViewById(R.id.item_author_lastname);
+            image = (ImageView) itemView.findViewById(R.id.item_author_image);
         }
 
         @Override

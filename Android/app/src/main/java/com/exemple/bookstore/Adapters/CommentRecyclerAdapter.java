@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.exemple.bookstore.Models.Comment;
@@ -42,6 +43,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
         holder.userUsername.setText(current.getUser().getUsername());
         holder.bookTitle.setText(current.getBook().getTitle());
         holder.commentContent.setText(current.getContent());
+        holder.commentRating.setRating(current.getRating());
     }
 
     @Override
@@ -54,6 +56,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
         public TextView userUsername;
         public TextView bookTitle;
         public TextView commentContent;
+        public RatingBar commentRating;
 
         public CommentHolder(View itemView){
             super(itemView);
@@ -61,6 +64,7 @@ public class CommentRecyclerAdapter extends RecyclerView.Adapter<CommentRecycler
             userUsername = (TextView) itemView.findViewById(R.id.item_comment_user);
             bookTitle = (TextView) itemView.findViewById(R.id.item_comment_book);
             commentContent = (TextView) itemView.findViewById(R.id.item_comment_content);
+            commentRating = (RatingBar) itemView.findViewById(R.id.ratingBar);
         }
 
         @Override
