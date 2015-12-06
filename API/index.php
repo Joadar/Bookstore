@@ -226,10 +226,14 @@
      */
 
     // get all authors
-    Flight::route("GET /authors", function() use($connection){
+    Flight::route("GET /authors", function() use($connection, $web_image_root){
 
-        $result = $connection->prepare("SELECT * FROM authors");
-        $result->execute();
+        $result = $connection->prepare("SELECT id, firstname, lastname, biography, CONCAT(:web_image_root, image) as image FROM authors");
+        $result->execute(
+            array(
+                ":web_image_root" => $web_image_root
+            )
+        );
 
         $return = $result->fetchAll(PDO::FETCH_CLASS);
         Flight::json($return); // return array of objects
@@ -237,12 +241,13 @@
     });
 
     // get author by id
-    Flight::route("GET /authors/@author_id", function($author_id) use($connection){
+    Flight::route("GET /authors/@author_id", function($author_id) use($connection, $web_image_root){
 
-        $result = $connection->prepare("SELECT * FROM authors WHERE id = :author_id");
+        $result = $connection->prepare("SELECT id, firstname, lastname, biography, CONCAT(:web_image_root, image) as image FROM authors WHERE id = :author_id");
         $result->execute(
             array(
-                ':author_id' => $author_id
+                ':author_id' => $author_id,
+                ':web_image_root' => $web_image_root
             )
         );
 
@@ -403,9 +408,13 @@
     // get all books
     Flight::route("GET /books", function() use($connection, $web_image_root){
 
-        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, image) as image, a.firstname, a.lastname, a.biography FROM books, authors a WHERE books.author_id = a.id");
-        $result->bindParam(':web_image_root', $web_image_root);
-        $result->execute();
+        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, books.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author FROM books, authors a WHERE books.author_id = a.id");
+        $result->execute(
+            array(
+                ":web_image_root" => $web_image_root,
+                ":web_image_root_2" => $web_image_root
+            )
+        );
 
         $return = array();
 
@@ -417,7 +426,8 @@
                         "id"        => intval($row["author_id"]),
                         "firstname" => $row["firstname"],
                         "lastname"  => $row["lastname"],
-                        "biography" => $row["biography"]
+                        "biography" => $row["biography"],
+                        "image"     => $row["image_author"]
                 ),
                 "description"   => $row["description"],
                 "editor"        => $row["editor"],
@@ -425,7 +435,7 @@
                 "pages"         => intval($row["pages"]),
                 "published"     => $row["published"],
                 "genre"         => $row["genre"],
-                "image"         => $row["image"]
+                "image"         => $row["image_book"]
             );
         }
 
@@ -435,10 +445,11 @@
 
     // get book by id
     Flight::route("GET /books/@book_id", function($book_id) use($connection, $web_image_root){
-        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, image) as image, a.firstname, a.lastname, a.biography FROM books, authors a WHERE books.author_id = a.id AND books.id = :book_id");
+        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, books.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author FROM books, authors a WHERE books.author_id = a.id AND books.id = :book_id");
         $result->execute(
             array(
                 ":web_image_root" => $web_image_root,
+                ":web_image_root_2" => $web_image_root,
                 ":book_id" => $book_id
             )
         );
@@ -457,7 +468,8 @@
                     "id"        => intval($return["author_id"]),
                     "firstname" => $return["firstname"],
                     "lastname"  => $return["lastname"],
-                    "biography" => $return["biography"]
+                    "biography" => $return["biography"],
+                    "image"     => $return["image_author"]
                 ),
                 "description"   => $return["description"],
                 "editor"        => $return["editor"],
@@ -465,7 +477,7 @@
                 "pages"         => intval($return["pages"]),
                 "published"     => $return["published"],
                 "genre"         => $return["genre"],
-                "image"         => $return["image"]
+                "image"         => $return["image_book"]
             );
         }
 
@@ -508,45 +520,47 @@
 
     // get all comments
     Flight::route("GET /comments", function() use($connection, $web_image_root){
-        $result = $connection->prepare("SELECT co.id as comment_id, co.user_id, co.book_id, u.username, u.token, u.email, u.sexe, u.active, u.admin, co.content, co.rating, co.created, b.title, b.author_id, b.description, b.editor, b.collection, b.pages, b.published, b.genre, CONCAT(:web_image_root, b.image) as image, a.firstname, a.lastname, a.biography
+        $result = $connection->prepare("SELECT co.id as comment_id, co.user_id, co.book_id, u.username, u.token, u.email, u.sexe, u.active, u.admin, co.content, co.rating, co.created, b.title, b.author_id, b.description, b.editor, b.collection, b.pages, b.published, b.genre, CONCAT(:web_image_root, b.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author
                                         FROM comments co, users u, books b, authors a
                                         WHERE co.user_id  = u.id
                                         AND co.book_id    = b.id
                                         AND b.author_id   = a.id");
         $result->execute(
             array(
-                ":web_image_root" => $web_image_root
+                ":web_image_root"   => $web_image_root,
+                ":web_image_root_2" => $web_image_root
             )
         );
 
         while($row = $result->fetch(PDO::FETCH_ASSOC)) {
             $return[] = array(
-                "id" => intval($row["comment_id"]),
-                "user" => array(
-                    "id" => intval($row["user_id"]),
-                    "username" => $row["username"],
-                    "token" => $row["token"],
-                    "email" => $row["email"],
-                    "sexe" => $row["sexe"],
-                    "active" => $row["active"],
-                    "admin" => $row["admin"]
+                "id"        => intval($row["comment_id"]),
+                "user"      => array(
+                    "id"        => intval($row["user_id"]),
+                    "username"  => $row["username"],
+                    "token"     => $row["token"],
+                    "email"     => $row["email"],
+                    "sexe"      => $row["sexe"],
+                    "active"    => $row["active"],
+                    "admin"     => $row["admin"]
                 ),
-                "book" => array(
-                    "id" => intval($row["book_id"]),
-                    "title" => $row["title"],
-                    "author" => array(
-                        "id" => intval($row["author_id"]),
-                        "firstname" => $row["firstname"],
-                        "lastname" => $row["lastname"],
-                        "biography" => $row["biography"]
+                "book"      => array(
+                    "id"            => intval($row["book_id"]),
+                    "title"         => $row["title"],
+                    "author"        => array(
+                        "id"            => intval($row["author_id"]),
+                        "firstname"     => $row["firstname"],
+                        "lastname"      => $row["lastname"],
+                        "biography"     => $row["biography"],
+                        "image"         => $row["image_author"]
                     ),
-                    "description" => $row["description"],
-                    "editor" => $row["editor"],
-                    "collection" => $row["collection"],
-                    "pages" => intval($row["pages"]),
-                    "published" => $row["published"],
-                    "genre" => $row["genre"],
-                    "image" => $row["image"]
+                    "description"       => $row["description"],
+                    "editor"            => $row["editor"],
+                    "collection"        => $row["collection"],
+                    "pages"             => intval($row["pages"]),
+                    "published"         => $row["published"],
+                    "genre"             => $row["genre"],
+                    "image"             => $row["image_book"]
                 ),
                 "content" => $row["content"],
                 "rating" => intval($row["rating"]),
@@ -560,7 +574,7 @@
 
     // get all comments from a book
     Flight::route("GET /books/@book_id/comments", function($book_id) use($connection, $web_image_root){
-        $result = $connection->prepare("SELECT co.id as comment_id, co.user_id, co.book_id, u.username, u.token, u.email, u.sexe, u.active, u.admin, co.content, co.rating, co.created, b.title, b.author_id, b.description, b.editor, b.collection, b.pages, b.published, b.genre, CONCAT(:web_image_root, b.image) as image, a.firstname, a.lastname, a.biography
+        $result = $connection->prepare("SELECT co.id as comment_id, co.user_id, co.book_id, u.username, u.token, u.email, u.sexe, u.active, u.admin, co.content, co.rating, co.created, b.title, b.author_id, b.description, b.editor, b.collection, b.pages, b.published, b.genre, CONCAT(:web_image_root, b.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author
                                         FROM comments co, users u, books b, authors a
                                         WHERE co.user_id  = u.id
                                         AND co.book_id    = b.id
@@ -568,8 +582,9 @@
                                         AND co.book_id    = :book_id");
         $result->execute(
             array(
-                ":book_id" => $book_id,
-                ":web_image_root" => $web_image_root
+                ":book_id"          => $book_id,
+                ":web_image_root"   => $web_image_root,
+                ":web_image_root_2" => $web_image_root
             )
         );
 
@@ -593,7 +608,8 @@
                         "id"            => intval($row["author_id"]),
                         "firstname"     => $row["firstname"],
                         "lastname"      => $row["lastname"],
-                        "biography"     => $row["biography"]
+                        "biography"     => $row["biography"],
+                        "image"         => $row["image_author"]
                     ),
                     "description"   => $row["description"],
                     "editor"        => $row["editor"],
@@ -601,7 +617,7 @@
                     "pages"         => intval($row["pages"]),
                     "published"     => $row["published"],
                     "genre"         => $row["genre"],
-                    "image"         => $row["image"]
+                    "image"         => $row["image_book"]
                 ),
                 "content"   => $row["content"],
                 "rating"    => intval($row["rating"]),
@@ -616,7 +632,7 @@
                 "message" => "No comments for this book"
             );
         } else {*/
-            $return = array();
+            /*$return = array();
             while($row = $result->fetch(PDO::FETCH_ASSOC)){
                 $return[] = array(
                     "id"        => intval($row["comment_id"]),
@@ -650,7 +666,7 @@
                     "rating"    => intval($row["rating"]),
                     "created"   => $row["created"]
                 );
-            }
+            }*/
         //}
 
         Flight::json($return);
