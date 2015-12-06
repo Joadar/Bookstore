@@ -23,6 +23,13 @@
 
 			if ($this->request->is('put')) { // Si c'est un put (donc édition)
 				$this->Author->create(); // Préparation de l'insertion
+
+				if(empty($this->request->data["Author"]["image_file"]["name"]) && !empty($author["Author"]["image"])){
+					$this->request->data["Author"]["image_file"] = $author["Author"]["image"];
+				} else if(empty($this->request->data["Author"]["image_file"]["name"]) && empty($author["Author"]["image"])) {
+					$this->request->data["Author"]["image"] = "/img/no_image.jpg";
+				}
+
 				if ($this->Author->save($this->request->data)) { // Sauvegarde des données de l'auteur
 					$this->redirect(array('action' => 'view', $this->Author->id, 'admin' => false));
 				}

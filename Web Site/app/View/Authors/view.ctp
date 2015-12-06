@@ -1,5 +1,11 @@
 <div class="row">
-	<div class="col-md-12">
+	<div class="col-md-3">
+		<?php
+        if(!empty($author['Author']['image'])) {
+            echo $this->Image->resize($author['Author']['image'], 262, 400);
+        }?>
+	</div>
+	<div class="col-md-9">
 		<?php if(AuthComponent::user('admin') == true){
 			echo $this->Html->link('Editer', array('action' => 'edit', 'admin' => true, $author['Author']['id']), array('class' => 'btn btn-xs btn-success pull-right'));
 		} ?>

@@ -108,8 +108,10 @@ class UploadBehavior extends ModelBehavior{
         }
         $info = pathinfo($file);
         $subfiles = glob(WWW_ROOT . $info['dirname'] . DS . $info['filename'] . '_*x*.*');
-        if(file_exists(WWW_ROOT . $file)){
-            unlink(WWW_ROOT . $file);
+        if($file != "/img/no_image.jpg") {
+            if (file_exists(WWW_ROOT . $file)) {
+                unlink(WWW_ROOT . $file);
+            }
         }
         if($subfiles){
             foreach($subfiles as $file){
