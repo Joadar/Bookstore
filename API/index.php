@@ -264,20 +264,37 @@
     });
 
     // get all author's books
-    Flight::route("GET /authors/@author_id/books", function($author_id) use($connection){
+    Flight::route("GET /authors/@author_id/books", function($author_id) use($connection, $web_image_root){
 
-        $result = $connection->prepare("SELECT * FROM books WHERE author_id = :author_id");
+        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, books.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author FROM books, authors a WHERE books.author_id = a.id AND author_id = :author_id");
         $result->execute(
             array(
-                ":author_id" => $author_id
+                ":author_id"        => $author_id,
+                ":web_image_root"   => $web_image_root,
+                ":web_image_root_2" => $web_image_root
             )
         );
 
-        $return = $result->fetchAll(PDO::FETCH_CLASS);
-        if(empty($return)) {
-            $return = array(
-                "success" => false,
-                "message" => "No books for this author"
+        $return = array();
+
+        while($row = $result->fetch(PDO::FETCH_ASSOC)){
+            $return[] = array(
+                "id"            => intval($row["id"]),
+                "title"         => $row["title"],
+                "author"        => array(
+                    "id"        => intval($row["author_id"]),
+                    "firstname" => $row["firstname"],
+                    "lastname"  => $row["lastname"],
+                    "biography" => $row["biography"],
+                    "image"     => $row["image_author"]
+                ),
+                "description"   => $row["description"],
+                "editor"        => $row["editor"],
+                "collection"    => $row["collection"],
+                "pages"         => intval($row["pages"]),
+                "published"     => $row["published"],
+                "genre"         => $row["genre"],
+                "image"         => $row["image_book"]
             );
         }
 
