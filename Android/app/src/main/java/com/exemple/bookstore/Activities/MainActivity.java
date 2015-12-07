@@ -1,19 +1,23 @@
 package com.exemple.bookstore.Activities;
 
+import android.app.SearchManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.Toast;
 
 import com.exemple.bookstore.API.AuthorService;
-import com.exemple.bookstore.API.CommentService;
+import com.exemple.bookstore.API.BookService;
 import com.exemple.bookstore.Adapters.AuthorRecyclerAdapter;
 import com.exemple.bookstore.Bus.BusProvider;
 import com.exemple.bookstore.Events.LoadAuthorsEvent;
@@ -39,10 +43,11 @@ public class MainActivity extends AppCompatActivity {
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
     private AuthorService authorService;
-    private CommentService commentService;
 
     private ArrayList<Author> authorArrayList;
     private AuthorRecyclerAdapter authorRecyclerAdapter;
+
+    private BookService bookService;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,7 +55,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         authorService = new AuthorService();
-        commentService = new CommentService();
+        bookService = new BookService();
 
         getAuthors();
 
@@ -145,8 +150,48 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        // Retrieve the SearchView and plug it into SearchManager
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
+        searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                callSearch(query);
+                //if you want to collapse the searchview
+                invalidateOptionsMenu();
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                //if (searchView.isExpanded() && TextUtils.isEmpty(newText)) {
+                    //callSearch(newText);
+                //}
+                return true;
+            }
+
+            public void callSearch(String query) {
+                //Do searching
+                Log.d(LOG_TAG, "query = " + query);
+
+                Fragment fragmentBook = new BooksFragment();
+
+                Bundle bunble = new Bundle();
+                bunble.putString("search", query);
+                fragmentBook.setArguments(bunble);
+
+                FragmentManager fmBook = getSupportFragmentManager();
+                FragmentTransaction fragmentTransactionBook = fmBook.beginTransaction();
+                fragmentTransactionBook.replace(R.id.fragment_book, fragmentBook);
+                fragmentTransactionBook.commit();
+            }
+        });
+
         return true;
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

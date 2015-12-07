@@ -58,8 +58,13 @@ public class BooksFragment extends Fragment {
 
             Bundle bundle = getArguments();
             Integer authorId = bundle.getInt("author_id");
-            getBooksFromAuthor(authorId);
+            String searchBook = bundle.getString("search");
 
+            if(authorId != 0) {
+                getBooksFromAuthor(authorId);
+            } else if (searchBook != null || !searchBook.isEmpty()){
+                searchBooks(searchBook);
+            }
             TextView bookLabel = (TextView) view.findViewById(R.id.book_label);
             bookLabel.setText(getString(R.string.his_books));
 
@@ -101,6 +106,21 @@ public class BooksFragment extends Fragment {
             @Override
             public void onResponse(Response response, Retrofit retrofit) {
                 bookArrayList = (ArrayList<Book>) response.body();
+                BusProvider.getInstance().post(new LoadBooksEvent(bookArrayList));
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+    }
+
+    private void searchBooks(String title){
+        bookService.searchBooks(title, new Callback() {
+            @Override
+            public void onResponse(Response response, Retrofit retrofit) {
+               bookArrayList = (ArrayList<Book>) response.body();
                 BusProvider.getInstance().post(new LoadBooksEvent(bookArrayList));
             }
 

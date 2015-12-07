@@ -71,6 +71,11 @@ public interface RestInterface {
         @Path("id") int id
     );
 
+    @GET("/books/title/{title}")
+    Call<List<Book>> getBooksByTitle(
+        @Path("title") String title
+    );
+
     @PUT("/books/{id}")
     Call<Book> updateBook(
         @Path("id") int id,

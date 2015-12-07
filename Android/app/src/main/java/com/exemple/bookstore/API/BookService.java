@@ -30,4 +30,8 @@ public class BookService {
         restInterface.getBooksByAuthor(id).enqueue(callback);
     }
 
+    public void searchBooks(String title, Callback callback){
+        restInterface.getBooksByTitle(title).enqueue(callback);
+    }
+
 }
