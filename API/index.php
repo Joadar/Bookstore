@@ -502,6 +502,45 @@
 
     });
 
+    // get book by title
+    Flight::route("GET /books/title/@title", function($title) use($connection, $web_image_root){
+        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, books.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author FROM books, authors a WHERE books.author_id = a.id AND books.title LIKE :title");
+        //$result->bindParam()
+        $result->execute(
+            array(
+                ":web_image_root" => $web_image_root,
+                ":web_image_root_2" => $web_image_root,
+                ":title" => "%$title%"
+            )
+        );
+
+        $return = array();
+
+        while($row = $result->fetch(PDO::FETCH_ASSOC)){
+            $return[] = array(
+                "id"            => intval($row["id"]),
+                "title"         => $row["title"],
+                "author"        => array(
+                    "id"            => intval($row["author_id"]),
+                    "firstname"     => $row["firstname"],
+                    "lastname"      => $row["lastname"],
+                    "biography"     => $row["biography"],
+                    "image"         => $row["image_author"]
+                ),
+                "description"   => $row["description"],
+                "editor"        => $row["editor"],
+                "collection"    => $row["collection"],
+                "pages"         => intval($row["pages"]),
+                "published"     => $row["published"],
+                "genre"         => $row["genre"],
+                "image"         => $row["image_book"]
+            );
+        }
+
+        Flight::json($return);
+
+    });
+
     // update book by id
     Flight::route("PUT /books/@book_id", function($book_id) use($connection, $local_image_root){
 
