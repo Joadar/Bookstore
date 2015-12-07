@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/book_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/books"
+        style="@style/titleH1"/>
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/book_recycler"
+        android:layout_below="@id/book_label"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/home_recycler_height" />
+
+</RelativeLayout>

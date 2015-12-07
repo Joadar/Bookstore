@@ -26,4 +26,8 @@ public class BookService {
         restInterface.getBook(id).enqueue(callback);
     }
 
+    public void getBooksByAuthor(int id, Callback callback){
+        restInterface.getBooksByAuthor(id).enqueue(callback);
+    }
+
 }

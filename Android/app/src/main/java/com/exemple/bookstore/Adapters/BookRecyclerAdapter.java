@@ -1,12 +1,15 @@
 package com.exemple.bookstore.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.exemple.bookstore.Activities.BookActivity;
 import com.exemple.bookstore.Models.Book;
 import com.exemple.bookstore.R;
 import com.squareup.picasso.Picasso;
@@ -58,11 +61,18 @@ public class BookRecyclerAdapter extends RecyclerView.Adapter<BookRecyclerAdapte
             super(itemView);
 
             image = (ImageView) itemView.findViewById(R.id.item_book_image);
+
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
-
+            Intent intent = new Intent(context, BookActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt("book_id", bookArrayList.get(getAdapterPosition()).getId());
+            bundle.putParcelable("book", bookArrayList.get(getAdapterPosition()));
+            intent.putExtras(bundle);
+            context.startActivity(intent);
         }
     }
 }

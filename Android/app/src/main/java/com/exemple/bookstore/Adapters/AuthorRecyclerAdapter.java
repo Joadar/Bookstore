@@ -1,6 +1,8 @@
 package com.exemple.bookstore.Adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,8 +10,10 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.exemple.bookstore.Activities.AuthorActivity;
 import com.exemple.bookstore.Models.Author;
 import com.exemple.bookstore.R;
+import com.exemple.bookstore.Utils.Tools;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -62,14 +66,25 @@ public class AuthorRecyclerAdapter extends RecyclerView.Adapter<AuthorRecyclerAd
 
         public AuthorHolder(View itemView){
             super(itemView);
+
             firstname = (TextView) itemView.findViewById(R.id.item_author_firstname);
             lastname = (TextView) itemView.findViewById(R.id.item_author_lastname);
             image = (ImageView) itemView.findViewById(R.id.item_author_image);
+
+            itemView.setOnClickListener(this);
         }
 
         @Override
         public void onClick(View v) {
 
+            Tools.saveToPreferences(context, "AuthorPosition", String.valueOf(getAdapterPosition()));
+
+            Intent intent = new Intent(context, AuthorActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putInt("author_id", authorArrayList.get(getAdapterPosition()).getId());
+            bundle.putParcelable("author", authorArrayList.get(getAdapterPosition()));
+            intent.putExtras(bundle);
+            context.startActivity(intent);
         }
     }
 }

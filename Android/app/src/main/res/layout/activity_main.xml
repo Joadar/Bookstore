@@ -1,83 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".Activities.MainActivity">
+    xmlns:tools="http://schemas.android.com/tools">
 
-    <RelativeLayout
+    <include
+        android:id="@+id/app_bar"
+        layout="@layout/app_bar" />
+
+
+    <ScrollView
+        android:layout_below="@id/app_bar"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".Activities.MainActivity">
 
         <RelativeLayout
-            android:id="@+id/book_layout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
-            <TextView
-                android:id="@+id/book_label"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/books"
-                style="@style/titleH1"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/book_recycler"
-                android:layout_below="@id/book_label"
+            <FrameLayout
+                android:id="@+id/fragment_book"
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/home_recycler_height">
+                android:layout_height="wrap_content" />
 
-            </android.support.v7.widget.RecyclerView>
+
+            <RelativeLayout
+                android:id="@+id/author_layout"
+                android:layout_below="@id/fragment_book"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <TextView
+                    android:id="@+id/author_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/authors"
+                    style="@style/titleH1"/>
+
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/author_recycler"
+                    android:layout_below="@id/author_label"
+                    android:layout_width="match_parent"
+                    android:layout_height="@dimen/home_recycler_height">
+
+                </android.support.v7.widget.RecyclerView>
+
+            </RelativeLayout>
+
+           <FrameLayout
+               android:id="@+id/fragment_comment"
+               android:layout_below="@id/author_layout"
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content"></FrameLayout>
 
         </RelativeLayout>
 
-        <RelativeLayout
-            android:id="@+id/author_layout"
-            android:layout_below="@id/book_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/author_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/authors"
-                style="@style/titleH1"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/author_recycler"
-                android:layout_below="@id/author_label"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/home_recycler_height">
-
-            </android.support.v7.widget.RecyclerView>
-
-        </RelativeLayout>
-
-        <RelativeLayout
-            android:id="@+id/comment_layout"
-            android:layout_below="@id/author_layout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <TextView
-                android:id="@+id/comment_label"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:text="@string/comments"
-                style="@style/titleH1"/>
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/comment_recycler"
-                android:layout_below="@id/comment_label"
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/home_recycler_height">
-
-            </android.support.v7.widget.RecyclerView>
-
-        </RelativeLayout>
-
-    </RelativeLayout>
-
-</ScrollView>
+    </ScrollView>
+</RelativeLayout>

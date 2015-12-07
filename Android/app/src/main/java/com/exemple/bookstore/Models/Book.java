@@ -1,9 +1,12 @@
 package com.exemple.bookstore.Models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 /**
  * Created by Jonathan on 04/12/2015.
  */
-public class Book {
+public class Book implements Parcelable {
 
     private int     id;
     private String  title;
@@ -28,6 +31,31 @@ public class Book {
         this.genre = genre;
         this.image = image;
     }
+
+    protected Book(Parcel in) {
+        id = in.readInt();
+        title = in.readString();
+        author = in.readParcelable(Author.class.getClassLoader());
+        description = in.readString();
+        editor = in.readString();
+        collection = in.readString();
+        pages = in.readInt();
+        published = in.readString();
+        genre = in.readString();
+        image = in.readString();
+    }
+
+    public static final Creator<Book> CREATOR = new Creator<Book>() {
+        @Override
+        public Book createFromParcel(Parcel in) {
+            return new Book(in);
+        }
+
+        @Override
+        public Book[] newArray(int size) {
+            return new Book[size];
+        }
+    };
 
     public int getId() {
         return id;
@@ -107,5 +135,24 @@ public class Book {
 
     public void setImage(String image) {
         this.image = image;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeInt(id);
+        dest.writeString(title);
+        dest.writeParcelable(author, flags);
+        dest.writeString(description);
+        dest.writeString(editor);
+        dest.writeString(collection);
+        dest.writeInt(pages);
+        dest.writeString(published);
+        dest.writeString(genre);
+        dest.writeString(image);
     }
 }

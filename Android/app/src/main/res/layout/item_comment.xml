@@ -17,6 +17,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
             style="?android:attr/ratingBarStyleSmall"
+            android:progressDrawable="@drawable/ratingbar_stars"
             android:numStars="5"
             android:stepSize="1.0"
             android:rating="2.0" />

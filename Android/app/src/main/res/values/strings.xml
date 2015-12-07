@@ -1,7 +1,21 @@
 <resources>
     <string name="app_name">Bookstore</string>
 
+    <!-- MainActivity -->
     <string name="books">Books</string>
     <string name="authors">Authors</string>
     <string name="comments">Comments</string>
+
+    <!-- BookActivity -->
+    <string name="author">Author</string>
+    <string name="published">Published</string>
+    <string name="pages">Pages</string>
+    <string name="description">Description</string>
+    <string name="book_image">Book image</string>
+
+    <!-- AuthorActivity -->
+    <string name="his_books">His books</string>
+
+    <!-- Libraries -->
+    <string name="appbar_scrolling_view_behavior" translatable="false">android.support.design.widget.AppBarLayout$ScrollingViewBehavior</string>
 </resources>
