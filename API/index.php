@@ -420,7 +420,7 @@
 
     });
 
-    // get author by name
+    // get author by title book
     Flight::route("GET /authors/book_title/@title", function($title) use($connection, $web_image_root){
         $result = $connection->prepare("SELECT DISTINCT(a.id), a.firstname, a.lastname, a.biography, CONCAT(:web_image_root, a.image) as image FROM books, authors a WHERE books.author_id = a.id AND books.title LIKE :title");
         //$result->bindParam()
@@ -428,6 +428,22 @@
             array(
                 ":web_image_root" => $web_image_root,
                 ":title" => "%$title%"
+            )
+        );
+        $return = $result->fetchAll(PDO::FETCH_CLASS);
+        Flight::json($return);
+
+    });
+
+    // get author by name
+    Flight::route("GET /authors/name/@name_searched", function($name_searched) use($connection, $web_image_root){
+        $result = $connection->prepare("SELECT DISTINCT(a.id), a.firstname, a.lastname, a.biography, CONCAT(:web_image_root, a.image) as image FROM authors a WHERE a.firstname LIKE :name_searched_1 OR a.lastname LIKE :name_searched_2");
+        //$result->bindParam()
+        $result->execute(
+            array(
+                ":web_image_root" => $web_image_root,
+                ":name_searched_1" => "%$name_searched%",
+                ":name_searched_2" => "%$name_searched%"
             )
         );
         $return = $result->fetchAll(PDO::FETCH_CLASS);
