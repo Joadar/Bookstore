@@ -19,7 +19,10 @@
      * OTHER
      */
 
-    $web_image_root = "http://192.168.0.23/Web%20Site";
+    //$web_image_root = "http://192.168.0.23/Web%20Site";
+    //$local_image_root = "/Web Site/app/webroot";
+
+    $web_image_root = "http://192.168.1.27/Web%20Site";
     $local_image_root = "/Web Site/app/webroot";
 
     // method to save and update image on the folder
@@ -236,7 +239,7 @@
         );
 
         $return = $result->fetchAll(PDO::FETCH_CLASS);
-        Flight::json($return); // return array of objects
+        Flight::json($return);
 
     });
 
@@ -413,6 +416,21 @@
             "message" => $message
         );
 
+        Flight::json($return);
+
+    });
+
+    // get author by name
+    Flight::route("GET /authors/book_title/@title", function($title) use($connection, $web_image_root){
+        $result = $connection->prepare("SELECT DISTINCT(a.id), a.firstname, a.lastname, a.biography, CONCAT(:web_image_root, a.image) as image FROM books, authors a WHERE books.author_id = a.id AND books.title LIKE :title");
+        //$result->bindParam()
+        $result->execute(
+            array(
+                ":web_image_root" => $web_image_root,
+                ":title" => "%$title%"
+            )
+        );
+        $return = $result->fetchAll(PDO::FETCH_CLASS);
         Flight::json($return);
 
     });
