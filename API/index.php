@@ -715,49 +715,63 @@
             );
         }
 
-        //$return = $result->fetchAll(PDO::FETCH_CLASS);
-        /*if(empty($return)) {
-            $return = array(
-                "success" => false,
-                "message" => "No comments for this book"
+        Flight::json($return);
+
+    });
+
+
+    // get all comments from book title
+    Flight::route("GET /comments/book_title/@title", function($title) use($connection, $web_image_root){
+        $result = $connection->prepare("SELECT co.id as comment_id, co.user_id, co.book_id, u.username, u.token, u.email, u.sexe, u.active, u.admin, co.content, co.rating, co.created, b.title, b.author_id, b.description, b.editor, b.collection, b.pages, b.published, b.genre, CONCAT(:web_image_root, b.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author
+                                            FROM comments co, users u, books b, authors a
+                                            WHERE co.user_id  = u.id
+                                            AND co.book_id    = b.id
+                                            AND b.author_id   = a.id
+                                            AND b.title       LIKE :title");
+        $result->execute(
+            array(
+                ":title"          => "%".$title."%",
+                ":web_image_root"   => $web_image_root,
+                ":web_image_root_2" => $web_image_root
+            )
+        );
+
+        $return = array();
+        while($row = $result->fetch(PDO::FETCH_ASSOC)){
+            $return[] = array(
+                "id"        => intval($row["comment_id"]),
+                "user"      => array(
+                    "id"            => intval($row["user_id"]),
+                    "username"      => $row["username"],
+                    "token"         => $row["token"],
+                    "email"         => $row["email"],
+                    "sexe"          => $row["sexe"],
+                    "active"        => $row["active"],
+                    "admin"         => $row["admin"]
+                ),
+                "book"      => array(
+                    "id"            => intval($row["book_id"]),
+                    "title"         => $row["title"],
+                    "author"        => array(
+                        "id"            => intval($row["author_id"]),
+                        "firstname"     => $row["firstname"],
+                        "lastname"      => $row["lastname"],
+                        "biography"     => $row["biography"],
+                        "image"         => $row["image_author"]
+                    ),
+                    "description"   => $row["description"],
+                    "editor"        => $row["editor"],
+                    "collection"    => $row["collection"],
+                    "pages"         => intval($row["pages"]),
+                    "published"     => $row["published"],
+                    "genre"         => $row["genre"],
+                    "image"         => $row["image_book"]
+                ),
+                "content"   => $row["content"],
+                "rating"    => intval($row["rating"]),
+                "created"   => $row["created"]
             );
-        } else {*/
-            /*$return = array();
-            while($row = $result->fetch(PDO::FETCH_ASSOC)){
-                $return[] = array(
-                    "id"        => intval($row["comment_id"]),
-                    "user"      => array(
-                        "id"            => intval($row["user_id"]),
-                        "username"      => $row["username"],
-                        "token"         => $row["token"],
-                        "email"         => $row["email"],
-                        "sexe"          => $row["sexe"],
-                        "active"        => $row["active"],
-                        "admin"         => $row["admin"]
-                    ),
-                    "book"      => array(
-                        "id"            => intval($row["book_id"]),
-                        "title"         => $row["title"],
-                        "author"        => array(
-                            "id"            => intval($row["author_id"]),
-                            "firstname"     => $row["firstname"],
-                            "lastname"      => $row["lastname"],
-                            "biography"     => $row["biography"]
-                        ),
-                        "description"   => $row["description"],
-                        "editor"        => $row["editor"],
-                        "collection"    => $row["collection"],
-                        "pages"         => intval($row["pages"]),
-                        "published"     => $row["published"],
-                        "genre"         => $row["genre"],
-                        "image"         => $row["image"]
-                    ),
-                    "content"   => $row["content"],
-                    "rating"    => intval($row["rating"]),
-                    "created"   => $row["created"]
-                );
-            }*/
-        //}
+        }
 
         Flight::json($return);
 
