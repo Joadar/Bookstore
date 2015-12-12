@@ -8,7 +8,6 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TextView;
 
 import com.exemple.bookstore.API.CommentService;
 import com.exemple.bookstore.Adapters.CommentRecyclerAdapter;
@@ -28,8 +27,6 @@ import retrofit.Retrofit;
  * Created by Jonathan on 07/12/2015.
  */
 public class CommentsFragment extends Fragment {
-
-    private TextView commentLabel;
 
     private CommentService commentService;
     private RecyclerView commentsRecycler;
@@ -53,8 +50,6 @@ public class CommentsFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_comments, container, false);
-
-        commentLabel = (TextView) view.findViewById(R.id.comment_label);
 
         commentService = new CommentService();
 

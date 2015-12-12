@@ -24,35 +24,17 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />
 
-
-            <RelativeLayout
-                android:id="@+id/author_layout"
+            <FrameLayout
+                android:id="@+id/fragment_author"
                 android:layout_below="@id/fragment_book"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content" />
 
-                <TextView
-                    android:id="@+id/author_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="@string/authors"
-                    style="@style/titleH1"/>
-
-                <android.support.v7.widget.RecyclerView
-                    android:id="@+id/author_recycler"
-                    android:layout_below="@id/author_label"
-                    android:layout_width="match_parent"
-                    android:layout_height="@dimen/home_recycler_height">
-
-                </android.support.v7.widget.RecyclerView>
-
-            </RelativeLayout>
-
-           <FrameLayout
-               android:id="@+id/fragment_comment"
-               android:layout_below="@id/author_layout"
-               android:layout_width="match_parent"
-               android:layout_height="wrap_content"></FrameLayout>
+            <FrameLayout
+                android:id="@+id/fragment_comment"
+                android:layout_below="@id/fragment_author"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
 
         </RelativeLayout>
 

@@ -23,7 +23,8 @@ public interface RestInterface {
     //String ENDPOINT = "http://10.0.3.2/Projects/Bookstore/API";
     //String ENDPOINT = "http://192.168.0.12:80/Projects/Bookstore/API";
     //String ENDPOINT = "http://192.168.56.1/Projects/Bookstore/API";
-    String ENDPOINT = "http://192.168.0.23";
+    //String ENDPOINT = "http://192.168.0.23";
+    String ENDPOINT = "http://192.168.1.27";
 
 
     /**
@@ -109,6 +110,16 @@ public interface RestInterface {
     @GET("/authors/{id}/books")
     Call<List<Book>> getBooksByAuthor(
         @Path("id") int id
+    );
+
+    @GET("/authors/book_title/{title}")
+    Call<List<Author>> getAuthorsByTitle(
+        @Path("title") String title
+    );
+
+    @GET("/authors/name/{name}")
+    Call<List<Author>> getAuthorsByName(
+        @Path("name") String name
     );
 
     @POST("/authors/{id}/books")

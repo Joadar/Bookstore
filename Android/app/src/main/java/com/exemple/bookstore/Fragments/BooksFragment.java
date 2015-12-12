@@ -62,11 +62,15 @@ public class BooksFragment extends Fragment {
 
             if(authorId != 0) {
                 getBooksFromAuthor(authorId);
-            } else if (searchBook != null || !searchBook.isEmpty()){
+
+                TextView bookLabel = (TextView) view.findViewById(R.id.book_label);
+                bookLabel.setText(getString(R.string.his_books));
+
+            } else if (searchBook != null && !searchBook.isEmpty()){
                 searchBooks(searchBook);
+            } else {
+                getBooks();
             }
-            TextView bookLabel = (TextView) view.findViewById(R.id.book_label);
-            bookLabel.setText(getString(R.string.his_books));
 
         } else {
             getBooks();

@@ -28,4 +28,12 @@ public class AuthorService {
         restInterface.getAuthor(id).enqueue(callback);
     }
 
+    public void getAuthorsByTitle(String title, Callback callback){
+        restInterface.getAuthorsByTitle(title).enqueue(callback);
+    }
+
+    public void getAuthorsByName(String name, Callback callback){
+        restInterface.getAuthorsByName(name).enqueue(callback);
+    }
+
 }
