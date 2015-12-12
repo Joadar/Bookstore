@@ -147,6 +147,12 @@ public interface RestInterface {
         @Path("cid") int cid
     );
 
+    @GET("/comments/book_title/{title}")
+    Call<List<Comment>> listCommentsByBookTitle(
+        @Path("title") String title
+
+    );
+
     @POST("/books/{id}/comments")
     Call<Comment> createComment(
         @Path("id") int id,

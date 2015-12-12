@@ -59,21 +59,6 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    /*private void getBookById(int id){
-        bookService.getBookById(id, new Callback() {
-            @Override
-            public void onResponse(Response response, Retrofit retrofit) {
-                Book aBook = (Book) response.body();
-                Log.d(LOG_TAG, "book 0 author = " + aBook.getAuthor().getFirstname());
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });
-    }*/
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -105,6 +90,7 @@ public class MainActivity extends AppCompatActivity {
 
                 updateBooksList(query);
                 updateAuthorsList(query);
+                updateCommentsList(query);
             }
         });
 
@@ -114,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
                 Log.d("helloWorld", "onClose hitted");
                 updateBooksList(null);
                 updateAuthorsList(null);
+                updateCommentsList(null);
 
                 return false;
             }
@@ -146,6 +133,19 @@ public class MainActivity extends AppCompatActivity {
         FragmentTransaction fragmentTransactionAuthor = fmAuthor.beginTransaction();
         fragmentTransactionAuthor.replace(R.id.fragment_author, fragmentAuthor);
         fragmentTransactionAuthor.commit();
+    }
+
+    private void updateCommentsList(String query){
+        Fragment fragmentComment = new CommentsFragment();
+
+        Bundle bundleComment = new Bundle();
+        bundleComment.putString("search", query);
+        fragmentComment.setArguments(bundleComment);
+
+        FragmentManager fmComment = getSupportFragmentManager();
+        FragmentTransaction fragmentTransactionComment = fmComment.beginTransaction();
+        fragmentTransactionComment.replace(R.id.fragment_comment, fragmentComment);
+        fragmentTransactionComment.commit();
     }
 
 

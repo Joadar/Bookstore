@@ -32,4 +32,8 @@ public class CommentService {
         restInterface.getCommentByIdAndByBook(bookId, commentId).enqueue(callback);
     }
 
+    public void getCommentsByBookTitle(String title, Callback callback){
+        restInterface.listCommentsByBookTitle(title).enqueue(callback);
+    }
+
 }

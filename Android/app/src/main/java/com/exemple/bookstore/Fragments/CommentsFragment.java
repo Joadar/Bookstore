@@ -56,7 +56,14 @@ public class CommentsFragment extends Fragment {
         if(getArguments() != null){
             Bundle bundle = getArguments();
             Integer bookId = bundle.getInt("book_id");
-            getCommentsFromBook(bookId);
+            String searchBook = bundle.getString("search");
+            if(bookId != 0) {
+                getCommentsFromBook(bookId);
+            } else if (searchBook != null && !searchBook.isEmpty()){
+                searchComments(searchBook);
+            } else {
+                getComments();
+            }
         } else {
             getComments();
         }
@@ -92,6 +99,21 @@ public class CommentsFragment extends Fragment {
 
     private void getCommentsFromBook(int id){
         commentService.getCommentsByBook(id, new Callback() {
+            @Override
+            public void onResponse(Response response, Retrofit retrofit) {
+                commentArrayList = (ArrayList<Comment>) response.body();
+                BusProvider.getInstance().post(new LoadCommentsEvent(commentArrayList));
+            }
+
+            @Override
+            public void onFailure(Throwable t) {
+
+            }
+        });
+    }
+
+    private void searchComments(String search){
+        commentService.getCommentsByBookTitle(search, new Callback() {
             @Override
             public void onResponse(Response response, Retrofit retrofit) {
                 commentArrayList = (ArrayList<Comment>) response.body();
