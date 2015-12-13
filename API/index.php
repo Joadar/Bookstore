@@ -13,9 +13,11 @@
     $connection = new PDO("mysql:host=localhost;dbname=$dbname", $dbuser, $dbpwd);
     $connection->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     $connection->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
+    $connection->exec("SET CHARACTER SET utf8");
 
 
-    /**
+
+/**
      * OTHER
      */
 
@@ -231,7 +233,7 @@
     // get all authors
     Flight::route("GET /authors", function() use($connection, $web_image_root){
 
-        $result = $connection->prepare("SELECT id, firstname, lastname, biography, CONCAT(:web_image_root, image) as image FROM authors");
+        $result = $connection->prepare("SELECT id, firstname, lastname, biography, CONCAT(:web_image_root, image) as image FROM authors ORDER BY id DESC");
         $result->execute(
             array(
                 ":web_image_root" => $web_image_root
@@ -269,7 +271,7 @@
     // get all author's books
     Flight::route("GET /authors/@author_id/books", function($author_id) use($connection, $web_image_root){
 
-        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, books.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author FROM books, authors a WHERE books.author_id = a.id AND author_id = :author_id");
+        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, books.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author FROM books, authors a WHERE books.author_id = a.id AND author_id = :author_id ORDER BY books.id DESC");
         $result->execute(
             array(
                 ":author_id"        => $author_id,
@@ -422,7 +424,7 @@
 
     // get author by title book
     Flight::route("GET /authors/book_title/@title", function($title) use($connection, $web_image_root){
-        $result = $connection->prepare("SELECT DISTINCT(a.id), a.firstname, a.lastname, a.biography, CONCAT(:web_image_root, a.image) as image FROM books, authors a WHERE books.author_id = a.id AND books.title LIKE :title");
+        $result = $connection->prepare("SELECT DISTINCT(a.id), a.firstname, a.lastname, a.biography, CONCAT(:web_image_root, a.image) as image FROM books, authors a WHERE books.author_id = a.id AND books.title LIKE :title ORDER BY books.id DESC");
         //$result->bindParam()
         $result->execute(
             array(
@@ -437,7 +439,7 @@
 
     // get author by name
     Flight::route("GET /authors/name/@name_searched", function($name_searched) use($connection, $web_image_root){
-        $result = $connection->prepare("SELECT DISTINCT(a.id), a.firstname, a.lastname, a.biography, CONCAT(:web_image_root, a.image) as image FROM authors a WHERE a.firstname LIKE :name_searched_1 OR a.lastname LIKE :name_searched_2");
+        $result = $connection->prepare("SELECT DISTINCT(a.id), a.firstname, a.lastname, a.biography, CONCAT(:web_image_root, a.image) as image FROM authors a WHERE a.firstname LIKE :name_searched_1 OR a.lastname LIKE :name_searched_2 ORDER BY a.id DESC");
         //$result->bindParam()
         $result->execute(
             array(
@@ -459,7 +461,7 @@
     // get all books
     Flight::route("GET /books", function() use($connection, $web_image_root){
 
-        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, books.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author FROM books, authors a WHERE books.author_id = a.id");
+        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, books.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author FROM books, authors a WHERE books.author_id = a.id ORDER BY books.id DESC");
         $result->execute(
             array(
                 ":web_image_root" => $web_image_root,
@@ -538,7 +540,7 @@
 
     // get book by title
     Flight::route("GET /books/title/@title", function($title) use($connection, $web_image_root){
-        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, books.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author FROM books, authors a WHERE books.author_id = a.id AND books.title LIKE :title");
+        $result = $connection->prepare("SELECT books.id, title, author_id, description, editor, collection, pages, published, genre, CONCAT(:web_image_root, books.image) as image_book, a.firstname, a.lastname, a.biography, CONCAT(:web_image_root_2, a.image) as image_author FROM books, authors a WHERE books.author_id = a.id AND books.title LIKE :title ORDER BY books.id DESC");
         //$result->bindParam()
         $result->execute(
             array(
