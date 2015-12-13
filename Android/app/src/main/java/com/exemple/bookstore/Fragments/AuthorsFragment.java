@@ -14,6 +14,7 @@ import com.exemple.bookstore.API.AuthorService;
 import com.exemple.bookstore.Adapters.AuthorRecyclerAdapter;
 import com.exemple.bookstore.Bus.BusProvider;
 import com.exemple.bookstore.Events.LoadAuthorsEvent;
+import com.exemple.bookstore.Events.SearchEvent;
 import com.exemple.bookstore.Models.Author;
 import com.exemple.bookstore.R;
 import com.exemple.bookstore.Utils.Tools;
@@ -44,20 +45,7 @@ public class AuthorsFragment extends Fragment {
 
         authorService = new AuthorService();
 
-        if(getArguments() != null){
-
-            Bundle bundle = getArguments();
-            String searchAuthor = bundle.getString("search");
-
-            if (searchAuthor != null && !searchAuthor.isEmpty()){
-                searchAuthors(searchAuthor);
-            } else {
-                getAuthors();
-            }
-
-        } else {
-            getAuthors();
-        }
+        getAuthors();
 
         // authors list
         authorArrayList = new ArrayList<Author>();
@@ -69,8 +57,6 @@ public class AuthorsFragment extends Fragment {
         authorsRecycler = (RecyclerView) view.findViewById(R.id.author_recycler);
         authorsRecycler.setLayoutManager(layoutManagerAuthor);
         authorsRecycler.setAdapter(authorRecyclerAdapter);
-
-        getAuthors();
 
         if(Tools.readFromPreferences(getContext(), "AuthorPosition", null) != null) {
             int position = Integer.valueOf(Tools.readFromPreferences(getContext(), "AuthorPosition", null));
@@ -127,5 +113,14 @@ public class AuthorsFragment extends Fragment {
     @Subscribe
     public void onLoadAuthorsEvent(LoadAuthorsEvent event){
         authorsRecycler.setAdapter(new AuthorRecyclerAdapter(getContext(), event.getListAuthors()));
+    }
+
+    @Subscribe
+    public void onSearchEvent(SearchEvent event){
+        if(event.getSearch() != null){
+            searchAuthors(event.getSearch());
+        } else {
+            getAuthors();
+        }
     }
 }

@@ -13,6 +13,7 @@ import com.exemple.bookstore.API.CommentService;
 import com.exemple.bookstore.Adapters.CommentRecyclerAdapter;
 import com.exemple.bookstore.Bus.BusProvider;
 import com.exemple.bookstore.Events.LoadCommentsEvent;
+import com.exemple.bookstore.Events.SearchEvent;
 import com.exemple.bookstore.Models.Comment;
 import com.exemple.bookstore.R;
 import com.squareup.otto.Subscribe;
@@ -56,13 +57,8 @@ public class CommentsFragment extends Fragment {
         if(getArguments() != null){
             Bundle bundle = getArguments();
             Integer bookId = bundle.getInt("book_id");
-            String searchBook = bundle.getString("search");
             if(bookId != 0) {
                 getCommentsFromBook(bookId);
-            } else if (searchBook != null && !searchBook.isEmpty()){
-                searchComments(searchBook);
-            } else {
-                getComments();
             }
         } else {
             getComments();
@@ -130,6 +126,15 @@ public class CommentsFragment extends Fragment {
     @Subscribe
     public void onLoadCommentsEvent(LoadCommentsEvent event){
         commentsRecycler.setAdapter(new CommentRecyclerAdapter(getContext(), event.getListComments()));
+    }
+
+    @Subscribe
+    public void onSearchEvent(SearchEvent event){
+        if(event.getSearch() != null){
+            searchComments(event.getSearch());
+        } else {
+            getComments();
+        }
     }
 
 }

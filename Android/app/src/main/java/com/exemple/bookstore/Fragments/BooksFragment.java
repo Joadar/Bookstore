@@ -14,6 +14,7 @@ import com.exemple.bookstore.API.BookService;
 import com.exemple.bookstore.Adapters.BookRecyclerAdapter;
 import com.exemple.bookstore.Bus.BusProvider;
 import com.exemple.bookstore.Events.LoadBooksEvent;
+import com.exemple.bookstore.Events.SearchEvent;
 import com.exemple.bookstore.Models.Book;
 import com.exemple.bookstore.R;
 import com.squareup.otto.Subscribe;
@@ -58,18 +59,12 @@ public class BooksFragment extends Fragment {
 
             Bundle bundle = getArguments();
             Integer authorId = bundle.getInt("author_id");
-            String searchBook = bundle.getString("search");
 
             if(authorId != 0) {
                 getBooksFromAuthor(authorId);
 
                 TextView bookLabel = (TextView) view.findViewById(R.id.book_label);
                 bookLabel.setText(getString(R.string.his_books));
-
-            } else if (searchBook != null && !searchBook.isEmpty()){
-                searchBooks(searchBook);
-            } else {
-                getBooks();
             }
 
         } else {
@@ -138,5 +133,14 @@ public class BooksFragment extends Fragment {
     @Subscribe
     public void onLoadBooksEvent(LoadBooksEvent event){
         booksRecycler.setAdapter(new BookRecyclerAdapter(getContext(), event.getListBooks()));
+    }
+
+    @Subscribe
+    public void onSearchEvent(SearchEvent event){
+        if(event.getSearch() != null){
+            searchBooks(event.getSearch());
+        } else {
+            getBooks();
+        }
     }
 }

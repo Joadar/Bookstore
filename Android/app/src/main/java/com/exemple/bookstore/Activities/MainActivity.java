@@ -13,6 +13,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.exemple.bookstore.Bus.BusProvider;
+import com.exemple.bookstore.Events.SearchEvent;
 import com.exemple.bookstore.Fragments.AuthorsFragment;
 import com.exemple.bookstore.Fragments.BooksFragment;
 import com.exemple.bookstore.Fragments.CommentsFragment;
@@ -87,10 +89,7 @@ public class MainActivity extends AppCompatActivity {
             public void callSearch(String query) {
                 // do searching
                 Log.d(LOG_TAG, "query = " + query);
-
-                updateBooksList(query);
-                updateAuthorsList(query);
-                updateCommentsList(query);
+                BusProvider.getInstance().post(new SearchEvent(query));
             }
         });
 
@@ -98,54 +97,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onClose() {
                 Log.d("helloWorld", "onClose hitted");
-                updateBooksList(null);
-                updateAuthorsList(null);
-                updateCommentsList(null);
+                BusProvider.getInstance().post(new SearchEvent(null));
 
                 return false;
             }
         });
 
         return true;
-    }
-
-    private void updateBooksList(String query){
-        Fragment fragmentBook = new BooksFragment();
-
-        Bundle bunbleBook = new Bundle();
-        bunbleBook.putString("search", query);
-        fragmentBook.setArguments(bunbleBook);
-
-        FragmentManager fmBook = getSupportFragmentManager();
-        FragmentTransaction fragmentTransactionBook = fmBook.beginTransaction();
-        fragmentTransactionBook.replace(R.id.fragment_book, fragmentBook);
-        fragmentTransactionBook.commit();
-    }
-
-    private void updateAuthorsList(String query){
-        Fragment fragmentAuthor = new AuthorsFragment();
-
-        Bundle bundleAuthor = new Bundle();
-        bundleAuthor.putString("search", query);
-        fragmentAuthor.setArguments(bundleAuthor);
-
-        FragmentManager fmAuthor = getSupportFragmentManager();
-        FragmentTransaction fragmentTransactionAuthor = fmAuthor.beginTransaction();
-        fragmentTransactionAuthor.replace(R.id.fragment_author, fragmentAuthor);
-        fragmentTransactionAuthor.commit();
-    }
-
-    private void updateCommentsList(String query){
-        Fragment fragmentComment = new CommentsFragment();
-
-        Bundle bundleComment = new Bundle();
-        bundleComment.putString("search", query);
-        fragmentComment.setArguments(bundleComment);
-
-        FragmentManager fmComment = getSupportFragmentManager();
-        FragmentTransaction fragmentTransactionComment = fmComment.beginTransaction();
-        fragmentTransactionComment.replace(R.id.fragment_comment, fragmentComment);
-        fragmentTransactionComment.commit();
     }
 
 
