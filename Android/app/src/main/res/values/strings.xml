@@ -5,6 +5,9 @@
     <string name="books">Books</string>
     <string name="authors">Authors</string>
     <string name="comments">Comments</string>
+    <string name="emptyBooks">There is no books on your search</string>
+    <string name="emptyAuthors">There is no authors on your search</string>
+    <string name="emptyComments">There is no comments on the books searched</string>
 
     <!-- BookActivity -->
     <string name="author">Author</string>

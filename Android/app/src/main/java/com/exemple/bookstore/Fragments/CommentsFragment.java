@@ -8,6 +8,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.exemple.bookstore.API.CommentService;
 import com.exemple.bookstore.Adapters.CommentRecyclerAdapter;
@@ -29,11 +30,13 @@ import retrofit.Retrofit;
  */
 public class CommentsFragment extends Fragment {
 
-    private CommentService commentService;
-    private RecyclerView commentsRecycler;
+    private CommentService          commentService;
+    private RecyclerView            commentsRecycler;
 
-    private ArrayList<Comment> commentArrayList;
-    private CommentRecyclerAdapter commentRecyclerAdapter;
+    private ArrayList<Comment>      commentArrayList;
+    private CommentRecyclerAdapter  commentRecyclerAdapter;
+
+    private TextView                emptyMessage;
 
     @Override
     public void onResume() {
@@ -52,7 +55,8 @@ public class CommentsFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_comments, container, false);
 
-        commentService = new CommentService();
+        commentService  = new CommentService();
+        emptyMessage    = (TextView) view.findViewById(R.id.empty_message);
 
         if(getArguments() != null){
             Bundle bundle = getArguments();
@@ -78,12 +82,23 @@ public class CommentsFragment extends Fragment {
         return view;
     }
 
+    private void commentsOrNot(ArrayList<Comment> comments){
+        if(comments.size() == 0){
+            commentsRecycler.setVisibility(View.GONE);
+            emptyMessage.setVisibility(View.VISIBLE);
+        } else {
+            commentsRecycler.setVisibility(View.VISIBLE);
+            emptyMessage.setVisibility(View.GONE);
+        }
+    }
+
     private void getComments(){
         commentService.getComments(new Callback() {
             @Override
             public void onResponse(Response response, Retrofit retrofit) {
                 commentArrayList = (ArrayList<Comment>) response.body();
                 BusProvider.getInstance().post(new LoadCommentsEvent(commentArrayList));
+                commentsOrNot(commentArrayList);
             }
 
             @Override
@@ -99,6 +114,7 @@ public class CommentsFragment extends Fragment {
             public void onResponse(Response response, Retrofit retrofit) {
                 commentArrayList = (ArrayList<Comment>) response.body();
                 BusProvider.getInstance().post(new LoadCommentsEvent(commentArrayList));
+                commentsOrNot(commentArrayList);
             }
 
             @Override
@@ -114,6 +130,7 @@ public class CommentsFragment extends Fragment {
             public void onResponse(Response response, Retrofit retrofit) {
                 commentArrayList = (ArrayList<Comment>) response.body();
                 BusProvider.getInstance().post(new LoadCommentsEvent(commentArrayList));
+                commentsOrNot(commentArrayList);
             }
 
             @Override

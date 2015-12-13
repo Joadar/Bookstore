@@ -15,8 +15,12 @@
         android:id="@+id/comment_recycler"
         android:layout_below="@id/comment_label"
         android:layout_width="match_parent"
-        android:layout_height="@dimen/home_recycler_height">
+        android:layout_height="@dimen/home_recycler_height" />
 
-    </android.support.v7.widget.RecyclerView>
+    <TextView
+        android:id="@+id/empty_message"
+        android:layout_below="@id/comment_label"
+        android:text="@string/emptyComments"
+        style="@style/emptyMessage"/>
 
 </RelativeLayout>

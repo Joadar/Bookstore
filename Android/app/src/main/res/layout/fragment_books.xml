@@ -17,4 +17,10 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/home_recycler_height" />
 
+    <TextView
+        android:id="@+id/empty_message"
+        android:layout_below="@id/book_label"
+        android:text="@string/emptyBooks"
+        style="@style/emptyMessage"/>
+
 </RelativeLayout>

@@ -5,10 +5,10 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 
 import com.exemple.bookstore.API.AuthorService;
 import com.exemple.bookstore.Adapters.AuthorRecyclerAdapter;
@@ -31,19 +31,21 @@ import retrofit.Retrofit;
  */
 public class AuthorsFragment extends Fragment {
 
-    private AuthorService authorService;
+    private AuthorService           authorService;
 
-    private ArrayList<Author> authorArrayList;
-    private AuthorRecyclerAdapter authorRecyclerAdapter;
+    private ArrayList<Author>       authorArrayList;
+    private AuthorRecyclerAdapter   authorRecyclerAdapter;
 
-    private RecyclerView authorsRecycler;
+    private RecyclerView            authorsRecycler;
+    private TextView                emptyMessage;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_authors, container, false);
 
-        authorService = new AuthorService();
+        authorService   = new AuthorService();
+        emptyMessage    = (TextView) view.findViewById(R.id.empty_message);
 
         getAuthors();
 
@@ -66,6 +68,16 @@ public class AuthorsFragment extends Fragment {
         return view;
     }
 
+    private void authorsOrNot(ArrayList<Author> authors){
+        if(authors.size() == 0){
+            authorsRecycler.setVisibility(View.GONE);
+            emptyMessage.setVisibility(View.VISIBLE);
+        } else {
+            authorsRecycler.setVisibility(View.VISIBLE);
+            emptyMessage.setVisibility(View.GONE);
+        }
+    }
+
     @Override
     public void onResume() {
         super.onResume();
@@ -84,6 +96,7 @@ public class AuthorsFragment extends Fragment {
             public void onResponse(Response response, Retrofit retrofit) {
                 authorArrayList = (ArrayList<Author>) response.body();
                 BusProvider.getInstance().post(new LoadAuthorsEvent(authorArrayList));
+                authorsOrNot(authorArrayList);
             }
 
             @Override
@@ -99,8 +112,7 @@ public class AuthorsFragment extends Fragment {
             public void onResponse(Response response, Retrofit retrofit) {
                 authorArrayList = (ArrayList<Author>) response.body();
                 BusProvider.getInstance().post(new LoadAuthorsEvent(authorArrayList));
-
-                Log.d("helloWorld", "authors by name = " + authorArrayList.size());
+                authorsOrNot(authorArrayList);
             }
 
             @Override

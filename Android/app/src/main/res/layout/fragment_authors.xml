@@ -17,4 +17,10 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/home_recycler_height" />
 
+    <TextView
+        android:id="@+id/empty_message"
+        android:layout_below="@id/author_label"
+        android:text="@string/emptyAuthors"
+        style="@style/emptyMessage"/>
+
 </RelativeLayout>

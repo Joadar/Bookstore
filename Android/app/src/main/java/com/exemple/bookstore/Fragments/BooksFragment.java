@@ -30,11 +30,13 @@ import retrofit.Retrofit;
  */
 public class BooksFragment extends Fragment {
 
-    private BookService bookService;
-    private RecyclerView booksRecycler;
+    private BookService         bookService;
+    private RecyclerView        booksRecycler;
 
-    private ArrayList<Book> bookArrayList;
+    private ArrayList<Book>     bookArrayList;
     private BookRecyclerAdapter bookRecyclerAdapter;
+
+    private TextView            emptyMessage;
 
     @Override
     public void onResume() {
@@ -53,7 +55,10 @@ public class BooksFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_books, container, false);
 
-        bookService = new BookService();
+        booksRecycler   = (RecyclerView) view.findViewById(R.id.book_recycler);
+        emptyMessage    = (TextView) view.findViewById(R.id.empty_message);
+
+        bookService     = new BookService();
 
         if(getArguments() != null){
 
@@ -78,11 +83,20 @@ public class BooksFragment extends Fragment {
         LinearLayoutManager layoutManagerBook = new LinearLayoutManager(getContext());
         layoutManagerBook.setOrientation(LinearLayoutManager.HORIZONTAL);
 
-        booksRecycler = (RecyclerView) view.findViewById(R.id.book_recycler);
         booksRecycler.setLayoutManager(layoutManagerBook);
         booksRecycler.setAdapter(bookRecyclerAdapter);
 
         return view;
+    }
+
+    private void booksOrNot(ArrayList<Book> books){
+        if(books.size() == 0){
+            booksRecycler.setVisibility(View.GONE);
+            emptyMessage.setVisibility(View.VISIBLE);
+        } else {
+            booksRecycler.setVisibility(View.VISIBLE);
+            emptyMessage.setVisibility(View.GONE);
+        }
     }
 
     private void getBooks(){
@@ -91,6 +105,7 @@ public class BooksFragment extends Fragment {
             public void onResponse(Response response, Retrofit retrofit) {
                 bookArrayList = (ArrayList<Book>) response.body();
                 BusProvider.getInstance().post(new LoadBooksEvent(bookArrayList));
+                booksOrNot(bookArrayList);
             }
 
             @Override
@@ -106,6 +121,7 @@ public class BooksFragment extends Fragment {
             public void onResponse(Response response, Retrofit retrofit) {
                 bookArrayList = (ArrayList<Book>) response.body();
                 BusProvider.getInstance().post(new LoadBooksEvent(bookArrayList));
+                booksOrNot(bookArrayList);
             }
 
             @Override
@@ -119,8 +135,9 @@ public class BooksFragment extends Fragment {
         bookService.searchBooks(title, new Callback() {
             @Override
             public void onResponse(Response response, Retrofit retrofit) {
-               bookArrayList = (ArrayList<Book>) response.body();
+                bookArrayList = (ArrayList<Book>) response.body();
                 BusProvider.getInstance().post(new LoadBooksEvent(bookArrayList));
+                booksOrNot(bookArrayList);
             }
 
             @Override
