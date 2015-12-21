@@ -3,6 +3,7 @@ package com.exemple.bookstore.Activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.CollapsingToolbarLayout;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
@@ -24,7 +25,7 @@ public class BookActivity extends AppCompatActivity implements View.OnClickListe
 
     private TextView bookTitle;
     private ImageView bookImage;
-    private ImageView authorImage;
+    private FloatingActionButton authorImage;
     private TextView bookDescription;
     private TextView authorName;
     private TextView bookPages;
@@ -44,7 +45,7 @@ public class BookActivity extends AppCompatActivity implements View.OnClickListe
         bookImage       = (ImageView) findViewById(R.id.book_image);
         bookDescription = (TextView) findViewById(R.id.book_description);
         authorName      = (TextView) findViewById(R.id.book_author);
-        authorImage     = (ImageView) findViewById(R.id.author_image);
+        authorImage     = (FloatingActionButton) findViewById(R.id.author_image);
         bookPages       = (TextView) findViewById(R.id.book_pages);
         bookPublished   = (TextView) findViewById(R.id.book_published);
 
