@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -62,6 +63,7 @@ public class BookActivity extends AppCompatActivity implements View.OnClickListe
 
         Picasso.with(this)
                 .load(book.getImage())
+                .placeholder(R.drawable.no_image)
                 .into(bookImage);
 
         Picasso.with(this)
@@ -84,7 +86,7 @@ public class BookActivity extends AppCompatActivity implements View.OnClickListe
         ViewCompat.setTransitionName(findViewById(R.id.app_bar_layout), "name");
         CollapsingToolbarLayout collapsingToolbarLayout = (CollapsingToolbarLayout) findViewById(R.id.collapsing_toolbar);
         collapsingToolbarLayout.setTitle(book.getTitle());
-        collapsingToolbarLayout.setExpandedTitleColor(getResources().getColor(android.R.color.transparent));
+        collapsingToolbarLayout.setExpandedTitleColor(ContextCompat.getColor(this, android.R.color.transparent));
 
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

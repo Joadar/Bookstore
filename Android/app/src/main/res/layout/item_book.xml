@@ -4,4 +4,5 @@
     android:id="@+id/item_book_image"
     android:layout_width="125dp"
     android:layout_height="match_parent"
-    android:scaleType="fitXY" />
+    android:scaleType="fitXY"
+    android:contentDescription="@string/book_image"/>

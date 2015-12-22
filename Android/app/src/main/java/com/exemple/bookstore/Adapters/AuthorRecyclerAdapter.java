@@ -36,9 +36,8 @@ public class AuthorRecyclerAdapter extends RecyclerView.Adapter<AuthorRecyclerAd
     @Override
     public AuthorHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.item_author, parent, false);
-        AuthorHolder holder = new AuthorHolder(view);
 
-        return holder;
+        return new AuthorHolder(view);
     }
 
     @Override
@@ -50,6 +49,7 @@ public class AuthorRecyclerAdapter extends RecyclerView.Adapter<AuthorRecyclerAd
 
         Picasso.with(context)
                 .load(current.getImage())
+                .placeholder(R.drawable.no_image)
                 .into(holder.image);
     }
 

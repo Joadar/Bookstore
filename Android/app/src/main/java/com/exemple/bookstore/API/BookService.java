@@ -1,5 +1,9 @@
 package com.exemple.bookstore.API;
 
+import com.exemple.bookstore.Models.Book;
+
+import java.util.List;
+
 import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
@@ -20,17 +24,17 @@ public class BookService {
         restInterface = retrofit.create(RestInterface.class);
     }
 
-    public void getBooks(Callback callback){ restInterface.listBooks().enqueue(callback); }
+    public void getBooks(Callback<List<Book>> callback){ restInterface.listBooks().enqueue(callback); }
 
-    public void getBookById(int id, Callback callback){
+    public void getBookById(int id, Callback<Book> callback){
         restInterface.getBook(id).enqueue(callback);
     }
 
-    public void getBooksByAuthor(int id, Callback callback){
+    public void getBooksByAuthor(int id, Callback<List<Book>> callback){
         restInterface.getBooksByAuthor(id).enqueue(callback);
     }
 
-    public void searchBooks(String title, Callback callback){
+    public void searchBooks(String title, Callback<List<Book>> callback){
         restInterface.getBooksByTitle(title).enqueue(callback);
     }
 

@@ -34,9 +34,8 @@ public class BookRecyclerAdapter extends RecyclerView.Adapter<BookRecyclerAdapte
     @Override
     public BookHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = inflater.inflate(R.layout.item_book, parent, false);
-        BookHolder holder = new BookHolder(view);
 
-        return holder;
+        return new BookHolder(view);
     }
 
     @Override
@@ -45,6 +44,7 @@ public class BookRecyclerAdapter extends RecyclerView.Adapter<BookRecyclerAdapte
 
         Picasso.with(context)
                 .load(current.getImage())
+                .placeholder(R.drawable.no_image)
                 .into(holder.image);
     }
 

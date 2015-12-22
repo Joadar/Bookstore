@@ -20,6 +20,7 @@ import com.exemple.bookstore.R;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.Response;
@@ -28,6 +29,8 @@ import retrofit.Retrofit;
 /**
  * Created by Jonathan on 07/12/2015.
  */
+
+@SuppressWarnings("unchecked")
 public class CommentsFragment extends Fragment {
 
     private CommentService          commentService;
@@ -69,7 +72,7 @@ public class CommentsFragment extends Fragment {
         }
 
         // comments list
-        commentArrayList = new ArrayList<Comment>();
+        commentArrayList = new ArrayList<>();
         commentRecyclerAdapter = new CommentRecyclerAdapter(getContext(), commentArrayList);
 
         LinearLayoutManager layoutManagerComment = new LinearLayoutManager(getContext());
@@ -93,7 +96,7 @@ public class CommentsFragment extends Fragment {
     }
 
     private void getComments(){
-        commentService.getComments(new Callback() {
+        commentService.getComments(new Callback<List<Comment>>() {
             @Override
             public void onResponse(Response response, Retrofit retrofit) {
                 commentArrayList = (ArrayList<Comment>) response.body();
@@ -109,7 +112,7 @@ public class CommentsFragment extends Fragment {
     }
 
     private void getCommentsFromBook(int id){
-        commentService.getCommentsByBook(id, new Callback() {
+        commentService.getCommentsByBook(id, new Callback<List<Comment>>() {
             @Override
             public void onResponse(Response response, Retrofit retrofit) {
                 commentArrayList = (ArrayList<Comment>) response.body();
@@ -125,7 +128,7 @@ public class CommentsFragment extends Fragment {
     }
 
     private void searchComments(String search){
-        commentService.getCommentsByBookTitle(search, new Callback() {
+        commentService.getCommentsByBookTitle(search, new Callback<List<Comment>>() {
             @Override
             public void onResponse(Response response, Retrofit retrofit) {
                 commentArrayList = (ArrayList<Comment>) response.body();

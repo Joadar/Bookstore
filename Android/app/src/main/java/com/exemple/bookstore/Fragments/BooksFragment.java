@@ -20,6 +20,7 @@ import com.exemple.bookstore.R;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.Response;
@@ -28,6 +29,8 @@ import retrofit.Retrofit;
 /**
  * Created by Jonathan on 06/12/2015.
  */
+
+@SuppressWarnings("unchecked")
 public class BooksFragment extends Fragment {
 
     private BookService         bookService;
@@ -77,7 +80,7 @@ public class BooksFragment extends Fragment {
         }
 
         // books list
-        bookArrayList = new ArrayList<Book>();
+        bookArrayList = new ArrayList<>();
         bookRecyclerAdapter = new BookRecyclerAdapter(getContext(), bookArrayList);
 
         LinearLayoutManager layoutManagerBook = new LinearLayoutManager(getContext());
@@ -100,7 +103,7 @@ public class BooksFragment extends Fragment {
     }
 
     private void getBooks(){
-        bookService.getBooks(new Callback() {
+        bookService.getBooks(new Callback<List<Book>>() {
             @Override
             public void onResponse(Response response, Retrofit retrofit) {
                 bookArrayList = (ArrayList<Book>) response.body();
@@ -116,7 +119,7 @@ public class BooksFragment extends Fragment {
     }
 
     private void getBooksFromAuthor(int id){
-        bookService.getBooksByAuthor(id, new Callback() {
+        bookService.getBooksByAuthor(id, new Callback<List<Book>>() {
             @Override
             public void onResponse(Response response, Retrofit retrofit) {
                 bookArrayList = (ArrayList<Book>) response.body();
@@ -132,7 +135,7 @@ public class BooksFragment extends Fragment {
     }
 
     private void searchBooks(String title){
-        bookService.searchBooks(title, new Callback() {
+        bookService.searchBooks(title, new Callback<List<Book>>() {
             @Override
             public void onResponse(Response response, Retrofit retrofit) {
                 bookArrayList = (ArrayList<Book>) response.body();

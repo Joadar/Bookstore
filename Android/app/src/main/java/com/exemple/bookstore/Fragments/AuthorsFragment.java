@@ -21,6 +21,7 @@ import com.exemple.bookstore.Utils.Tools;
 import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import retrofit.Callback;
 import retrofit.Response;
@@ -29,6 +30,7 @@ import retrofit.Retrofit;
 /**
  * Created by Jonathan on 12/12/2015.
  */
+@SuppressWarnings("unchecked")
 public class AuthorsFragment extends Fragment {
 
     private AuthorService           authorService;
@@ -50,7 +52,7 @@ public class AuthorsFragment extends Fragment {
         getAuthors();
 
         // authors list
-        authorArrayList = new ArrayList<Author>();
+        authorArrayList = new ArrayList<>();
         authorRecyclerAdapter = new AuthorRecyclerAdapter(getContext(), authorArrayList);
 
         LinearLayoutManager layoutManagerAuthor = new LinearLayoutManager(getContext());
@@ -91,7 +93,7 @@ public class AuthorsFragment extends Fragment {
     }
 
     private void getAuthors(){
-        authorService.getAuthors(new Callback() {
+        authorService.getAuthors(new Callback<List<Author>>() {
             @Override
             public void onResponse(Response response, Retrofit retrofit) {
                 authorArrayList = (ArrayList<Author>) response.body();
@@ -107,7 +109,7 @@ public class AuthorsFragment extends Fragment {
     }
 
     private void searchAuthors(String search){
-        authorService.getAuthorsByName(search, new Callback() {
+        authorService.getAuthorsByName(search, new Callback<List<Author>>() {
             @Override
             public void onResponse(Response response, Retrofit retrofit) {
                 authorArrayList = (ArrayList<Author>) response.body();

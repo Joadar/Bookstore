@@ -1,5 +1,9 @@
 package com.exemple.bookstore.API;
 
+import com.exemple.bookstore.Models.Author;
+
+import java.util.List;
+
 import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
@@ -20,19 +24,19 @@ public class AuthorService {
         restInterface = retrofit.create(RestInterface.class);
     }
 
-    public void getAuthors(Callback callback){
+    public void getAuthors(Callback<List<Author>> callback){
         restInterface.listAuthors().enqueue(callback);
     }
 
-    public void getAuthorById(int id, Callback callback){
+    public void getAuthorById(int id, Callback<Author> callback){
         restInterface.getAuthor(id).enqueue(callback);
     }
 
-    public void getAuthorsByTitle(String title, Callback callback){
+    public void getAuthorsByTitle(String title, Callback<List<Author>> callback){
         restInterface.getAuthorsByTitle(title).enqueue(callback);
     }
 
-    public void getAuthorsByName(String name, Callback callback){
+    public void getAuthorsByName(String name, Callback<List<Author>> callback){
         restInterface.getAuthorsByName(name).enqueue(callback);
     }
 

@@ -9,7 +9,8 @@
         android:id="@+id/item_author_image"
         android:layout_width="125dp"
         android:layout_height="150dp"
-        android:scaleType="fitXY" />
+        android:scaleType="fitXY"
+        android:contentDescription="@string/author_image"/>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -22,16 +23,14 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="toot"
-            android:textColor="#FFF"/>
+            android:textColor="@android:color/white"/>
 
         <TextView
             android:id="@+id/item_author_lastname"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
-            android:text="toto"
-            android:textColor="#FFF"/>
+            android:textColor="@android:color/white"/>
     </LinearLayout>
 
 </LinearLayout>

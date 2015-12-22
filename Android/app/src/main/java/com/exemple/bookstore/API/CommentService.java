@@ -1,5 +1,9 @@
 package com.exemple.bookstore.API;
 
+import com.exemple.bookstore.Models.Comment;
+
+import java.util.List;
+
 import retrofit.Callback;
 import retrofit.GsonConverterFactory;
 import retrofit.Retrofit;
@@ -20,19 +24,19 @@ public class CommentService {
         restInterface = retrofit.create(RestInterface.class);
     }
 
-    public void getComments(Callback callback){
+    public void getComments(Callback<List<Comment>> callback){
         restInterface.listComments().enqueue(callback);
     }
 
-    public void getCommentsByBook(int bookId, Callback callback){
+    public void getCommentsByBook(int bookId, Callback<List<Comment>> callback){
         restInterface.listCommentsByBook(bookId).enqueue(callback);
     }
 
-    public void getCommentByIdAndByBook(int bookId, int commentId, Callback callback){
+    public void getCommentByIdAndByBook(int bookId, int commentId, Callback<Comment> callback){
         restInterface.getCommentByIdAndByBook(bookId, commentId).enqueue(callback);
     }
 
-    public void getCommentsByBookTitle(String title, Callback callback){
+    public void getCommentsByBookTitle(String title, Callback<List<Comment>> callback){
         restInterface.listCommentsByBookTitle(title).enqueue(callback);
     }
 
