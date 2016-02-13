@@ -19,14 +19,7 @@ import retrofit.http.Path;
  */
 public interface RestInterface {
 
-    //String ENDPOINT = "http://api.bookstore.dev";
-    //String ENDPOINT = "http://10.0.3.2/Projects/Bookstore/API";
-    //String ENDPOINT = "http://192.168.0.12:80/Projects/Bookstore/API";
-    //String ENDPOINT = "http://192.168.56.1/Projects/Bookstore/API";
-    //String ENDPOINT = "http://192.168.0.23";
-    //String ENDPOINT = "http://192.168.1.27";
-    String ENDPOINT = "http://192.168.0.28";
-
+    String ENDPOINT = "http://192.168.0.31";
 
     /**
      * USERS

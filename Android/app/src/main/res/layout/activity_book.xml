@@ -186,14 +186,17 @@
 
     </android.support.v4.widget.NestedScrollView>
 
-    <!--<ImageView
+    <ImageView
         android:id="@+id/author_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginRight="16dp"
         app:layout_anchor="@id/app_bar_layout"
-        app:layout_anchorGravity="bottom|right|end" />-->
+        app:layout_anchorGravity="bottom|right|end"
+        android:contentDescription="@string/author_image"/>
 
-    <android.support.design.widget.FloatingActionButton
+    <!--<android.support.design.widget.FloatingActionButton
         android:id="@+id/author_image"
         android:layout_width="100dp"
         android:layout_height="100dp"
@@ -203,6 +206,6 @@
         app:fabSize="mini"
         app:elevation="4dp"
         app:layout_anchor="@id/app_bar_layout"
-        app:layout_anchorGravity="bottom|right|end"/>
+        app:layout_anchorGravity="bottom|right|end"/>-->
 
 </android.support.design.widget.CoordinatorLayout>
