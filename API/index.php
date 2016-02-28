@@ -21,10 +21,7 @@
      * OTHER
      */
 
-    //$web_image_root = "http://192.168.0.23/Web%20Site";
-    //$local_image_root = "/Web Site/app/webroot";
-
-    $web_image_root = "http://192.168.1.27/Web%20Site";
+    $web_image_root = "http://192.168.0.31/Web%20Site";
     $local_image_root = "/Web Site/app/webroot";
 
     // method to save and update image on the folder
