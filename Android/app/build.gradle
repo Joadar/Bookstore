@@ -44,4 +44,5 @@ dependencies {
         exclude module: 'recyclerview-v7'
     }
 
+    compile 'javax.inject:javax.inject:1'
 }

@@ -13,21 +13,20 @@ import android.support.v4.view.GestureDetectorCompat;
 import android.support.v4.view.ViewCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
-import android.view.GestureDetector;
 import android.view.MenuItem;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.exemple.bookstore.Contracts.BookContract;
 import com.exemple.bookstore.Fragments.CommentsFragment;
 import com.exemple.bookstore.Models.Book;
+import com.exemple.bookstore.Presenters.BookPresenter;
 import com.exemple.bookstore.R;
 import com.exemple.bookstore.Utils.CircleTransform;
 import com.squareup.picasso.Picasso;
 
-public class BookActivity extends AppCompatActivity implements View.OnClickListener {
+public class BookActivity extends AppCompatActivity implements BookContract.View, View.OnClickListener {
 
     private TextView bookTitle;
     private ImageView bookImage;
@@ -40,7 +39,11 @@ public class BookActivity extends AppCompatActivity implements View.OnClickListe
     private Toolbar toolbar;
     private Book book;
 
+    private BookContract.Presenter bookPresenter;
+
     private GestureDetectorCompat mDetector;
+
+    private int bookId;
 
     @TargetApi(Build.VERSION_CODES.M)
     @Override
@@ -58,34 +61,12 @@ public class BookActivity extends AppCompatActivity implements View.OnClickListe
         bookPages       = (TextView) findViewById(R.id.book_pages);
         bookPublished   = (TextView) findViewById(R.id.book_published);
 
-        Fragment fragment = new CommentsFragment();
         Bundle bundle = getIntent().getExtras();
+        book = bundle.getParcelable("book");
 
-        if(bundle != null){
-            Integer bookId = bundle.getInt("book_id");
-            Bundle b = new Bundle();
-            b.putInt("book_id", bookId);
-            book = bundle.getParcelable("book");
-            fragment.setArguments(b);
-        }
+        bookId = bundle.getInt("book_id");
 
-        Picasso.with(this)
-                .load(book.getImage())
-                .placeholder(R.drawable.no_image)
-                .into(bookImage);
-
-        Picasso.with(this)
-                .load(book.getAuthor().getImage())
-                .transform(new CircleTransform())
-                .into(authorImage);
-
-        authorImage.setOnClickListener(this);
-
-        bookTitle.setText(book.getTitle());
-        bookDescription.setText(book.getDescription());
-        authorName.setText(book.getAuthor().getFirstname() + " " + book.getAuthor().getLastname());
-        bookPages.setText(String.valueOf(book.getPages()));
-        bookPublished.setText(book.getPublished());
+        bookPresenter = new BookPresenter(this);
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle(book.getTitle());
@@ -99,10 +80,6 @@ public class BookActivity extends AppCompatActivity implements View.OnClickListe
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-        FragmentManager fm = getSupportFragmentManager();
-        FragmentTransaction fragmentTransaction = fm.beginTransaction();
-        fragmentTransaction.replace(R.id.fragment_comment, fragment);
-        fragmentTransaction.commit();
     }
 
     @Override
@@ -119,14 +96,57 @@ public class BookActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-        if(v == authorImage){
-            Intent intent = new Intent(this, AuthorActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putInt("author_id", book.getAuthor().getId());
-            bundle.putParcelable("author", book.getAuthor());
-            intent.putExtras(bundle);
-            startActivity(intent);
-            this.finish();
-        }
+        bookPresenter.onAuthorClick();
+    }
+
+    @Override
+    public void showBookDetail() {
+        Picasso.with(this)
+                .load(book.getImage())
+                .placeholder(R.drawable.no_image)
+                .into(bookImage);
+
+        bookTitle.setText(book.getTitle());
+        bookDescription.setText(book.getDescription());
+        bookPages.setText(String.valueOf(book.getPages()));
+        bookPublished.setText(book.getPublished());
+
+    }
+
+    @Override
+    public void showAuthor() {
+        Picasso.with(this)
+                .load(book.getAuthor().getImage())
+                .transform(new CircleTransform())
+                .into(authorImage);
+
+        authorName.setText(book.getAuthor().getFirstname() + " " + book.getAuthor().getLastname());
+
+        authorImage.setOnClickListener(this);
+
+    }
+
+    @Override
+    public void showComments() {
+        Fragment fragment = new CommentsFragment();
+        Bundle b = new Bundle();
+        b.putInt("book_id", bookId);
+        fragment.setArguments(b);
+
+        FragmentManager fm = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fm.beginTransaction();
+        fragmentTransaction.replace(R.id.fragment_comment, fragment);
+        fragmentTransaction.commit();
+    }
+
+    @Override
+    public void goToAuthor() {
+        Intent intent = new Intent(this, AuthorActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putInt("author_id", book.getAuthor().getId());
+        bundle.putParcelable("author", book.getAuthor());
+        intent.putExtras(bundle);
+        startActivity(intent);
+        this.finish();
     }
 }
