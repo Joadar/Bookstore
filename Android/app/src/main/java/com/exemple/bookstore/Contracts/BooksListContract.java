@@ -1,22 +1,24 @@
 package com.exemple.bookstore.Contracts;
 
 import com.exemple.bookstore.Models.Book;
+import com.exemple.bookstore.Presenters.Presenter;
+import com.exemple.bookstore.Views.View;
 
 import java.util.ArrayList;
 
 /**
  * Created by Jonathan on 28/02/2016.
  */
-public interface BooksFragmentContract {
+public interface BooksListContract {
 
-    interface View {
+    interface BooksFragmentView extends View {
 
         void booksEmpty(Boolean empty);
 
         void refreshBooksList(ArrayList<Book> bookArrayList);
     }
 
-    interface Presenter {
+    interface BooksFragmentPresenter extends Presenter<BooksFragmentView> {
 
         void getBooks();
 

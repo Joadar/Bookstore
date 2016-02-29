@@ -13,16 +13,18 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.exemple.bookstore.Bus.BusProvider;
-import com.exemple.bookstore.Events.SearchEvent;
+import com.exemple.bookstore.Contracts.MainContract;
 import com.exemple.bookstore.Fragments.AuthorsFragment;
 import com.exemple.bookstore.Fragments.BooksFragment;
 import com.exemple.bookstore.Fragments.CommentsFragment;
+import com.exemple.bookstore.Presenters.MainPresenterImp;
 import com.exemple.bookstore.R;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MainContract.MainView {
 
     private Toolbar toolbar;
+
+    private MainPresenterImp mainPresenter;
 
     private static final String LOG_TAG = MainActivity.class.getSimpleName();
 
@@ -31,26 +33,34 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Fragment fragmentBook = new BooksFragment();
-        FragmentManager fmBook = getSupportFragmentManager();
-        FragmentTransaction ftBook = fmBook.beginTransaction();
+        mainPresenter = new MainPresenterImp();
+        mainPresenter.setView(this);
+
+        BooksFragment bFragment         = new BooksFragment();
+        Fragment fragmentBook           = bFragment;
+        FragmentManager fmBook          = getSupportFragmentManager();
+        FragmentTransaction ftBook      = fmBook.beginTransaction();
         ftBook.replace(R.id.fragment_book, fragmentBook);
         ftBook.commit();
 
-        Fragment fragmentComment = new CommentsFragment();
-        FragmentManager fmComment = getSupportFragmentManager();
-        FragmentTransaction ftComment = fmComment.beginTransaction();
+        mainPresenter.setBooksFragmentPresenter(bFragment);
+
+        Fragment fragmentComment        = new CommentsFragment();
+        FragmentManager fmComment       = getSupportFragmentManager();
+        FragmentTransaction ftComment   = fmComment.beginTransaction();
         ftComment.replace(R.id.fragment_comment, fragmentComment);
         ftComment.commit();
 
-        Fragment fragmentAuthor = new AuthorsFragment();
-        FragmentManager fmAuthor = getSupportFragmentManager();
-        FragmentTransaction ftAuthor = fmAuthor.beginTransaction();
+        AuthorsFragment aFragment       = new AuthorsFragment();
+        Fragment fragmentAuthor         = aFragment;
+        FragmentManager fmAuthor        = getSupportFragmentManager();
+        FragmentTransaction ftAuthor    = fmAuthor.beginTransaction();
         ftAuthor.replace(R.id.fragment_author, fragmentAuthor);
         ftAuthor.commit();
 
+        mainPresenter.setAuthorsListPresenterImp(aFragment);
+
         toolbar = (Toolbar) findViewById(R.id.app_bar);
-        
         setSupportActionBar(toolbar); // set our own toolbar
     }
 
@@ -58,7 +68,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onStop() {
         super.onStop();
         //Tools.saveToPreferences(this, "AuthorPosition", "0");
-
     }
 
     @Override
@@ -66,7 +75,7 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
 
         // Retrieve the SearchView and plug it into SearchManager
-        SearchView searchView = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
+        SearchView searchView       = (SearchView) MenuItemCompat.getActionView(menu.findItem(R.id.action_search));
         SearchManager searchManager = (SearchManager) getSystemService(SEARCH_SERVICE);
         searchView.setSearchableInfo(searchManager.getSearchableInfo(getComponentName()));
         searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener(){
@@ -89,7 +98,8 @@ public class MainActivity extends AppCompatActivity {
             public void callSearch(String query) {
                 // do searching
                 Log.d(LOG_TAG, "query = " + query);
-                BusProvider.getInstance().post(new SearchEvent(query));
+                mainPresenter.getBooksFragmentPresenter().searchBooks(query);
+                mainPresenter.getAuthorsListPresenterImp().searchAuthors(query);
             }
         });
 
@@ -97,7 +107,8 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onClose() {
                 Log.d("helloWorld", "onClose hitted");
-                BusProvider.getInstance().post(new SearchEvent(null));
+                mainPresenter.getBooksFragmentPresenter().getBooks();
+                mainPresenter.getAuthorsListPresenterImp().getAuthors();
 
                 return false;
             }

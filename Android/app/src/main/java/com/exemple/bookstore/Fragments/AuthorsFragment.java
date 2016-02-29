@@ -10,50 +10,39 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.exemple.bookstore.API.AuthorService;
 import com.exemple.bookstore.Adapters.AuthorRecyclerAdapter;
-import com.exemple.bookstore.Bus.BusProvider;
-import com.exemple.bookstore.Events.LoadAuthorsEvent;
-import com.exemple.bookstore.Events.SearchEvent;
+import com.exemple.bookstore.Contracts.AuthorsListContract;
 import com.exemple.bookstore.Models.Author;
+import com.exemple.bookstore.Presenters.AuthorsListPresenterImp;
 import com.exemple.bookstore.R;
 import com.exemple.bookstore.Utils.Tools;
-import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 
 /**
  * Created by Jonathan on 12/12/2015.
  */
 @SuppressWarnings("unchecked")
-public class AuthorsFragment extends Fragment {
+public class AuthorsFragment extends Fragment implements AuthorsListContract.AuthorsView {
 
-    private AuthorService           authorService;
-
-    private ArrayList<Author>       authorArrayList;
     private AuthorRecyclerAdapter   authorRecyclerAdapter;
 
     private RecyclerView            authorsRecycler;
     private TextView                emptyMessage;
+
+    private AuthorsListPresenterImp authorsListPresenterImp;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_authors, container, false);
 
-        authorService   = new AuthorService();
         emptyMessage    = (TextView) view.findViewById(R.id.empty_message);
 
-        getAuthors();
+        authorsListPresenterImp = new AuthorsListPresenterImp();
+        authorsListPresenterImp.setView(this);
 
-        // authors list
-        authorArrayList = new ArrayList<>();
-        authorRecyclerAdapter = new AuthorRecyclerAdapter(getContext(), authorArrayList);
+        authorsListPresenterImp.getAuthors();
 
         LinearLayoutManager layoutManagerAuthor = new LinearLayoutManager(getContext());
         layoutManagerAuthor.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -70,8 +59,9 @@ public class AuthorsFragment extends Fragment {
         return view;
     }
 
-    private void authorsOrNot(ArrayList<Author> authors){
-        if(authors.size() == 0){
+    @Override
+    public void authorsEmpty(boolean empty) {
+        if(empty){
             authorsRecycler.setVisibility(View.GONE);
             emptyMessage.setVisibility(View.VISIBLE);
         } else {
@@ -81,60 +71,8 @@ public class AuthorsFragment extends Fragment {
     }
 
     @Override
-    public void onResume() {
-        super.onResume();
-        BusProvider.getInstance().register(this);
-    }
+    public void refreshAuthorsList(ArrayList<Author> authorArrayList) {
+        authorsRecycler.setAdapter(new AuthorRecyclerAdapter(getContext(), authorArrayList));
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        BusProvider.getInstance().unregister(this);
-    }
-
-    private void getAuthors(){
-        authorService.getAuthors(new Callback<List<Author>>() {
-            @Override
-            public void onResponse(Response response, Retrofit retrofit) {
-                authorArrayList = (ArrayList<Author>) response.body();
-                BusProvider.getInstance().post(new LoadAuthorsEvent(authorArrayList));
-                authorsOrNot(authorArrayList);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });
-    }
-
-    private void searchAuthors(String search){
-        authorService.getAuthorsByName(search, new Callback<List<Author>>() {
-            @Override
-            public void onResponse(Response response, Retrofit retrofit) {
-                authorArrayList = (ArrayList<Author>) response.body();
-                BusProvider.getInstance().post(new LoadAuthorsEvent(authorArrayList));
-                authorsOrNot(authorArrayList);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });
-    }
-
-    @Subscribe
-    public void onLoadAuthorsEvent(LoadAuthorsEvent event){
-        authorsRecycler.setAdapter(new AuthorRecyclerAdapter(getContext(), event.getListAuthors()));
-    }
-
-    @Subscribe
-    public void onSearchEvent(SearchEvent event){
-        if(event.getSearch() != null){
-            searchAuthors(event.getSearch());
-        } else {
-            getAuthors();
-        }
     }
 }

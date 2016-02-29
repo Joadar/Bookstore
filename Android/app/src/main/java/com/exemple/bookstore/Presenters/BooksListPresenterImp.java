@@ -1,7 +1,7 @@
 package com.exemple.bookstore.Presenters;
 
 import com.exemple.bookstore.API.BookService;
-import com.exemple.bookstore.Contracts.BooksFragmentContract;
+import com.exemple.bookstore.Contracts.BooksListContract;
 import com.exemple.bookstore.Models.Book;
 
 import java.util.ArrayList;
@@ -14,18 +14,16 @@ import retrofit.Retrofit;
 /**
  * Created by Jonathan on 28/02/2016.
  */
-public class BooksFragmentPresenter implements BooksFragmentContract.Presenter {
+public class BooksListPresenterImp implements BooksListContract.BooksFragmentPresenter {
 
     private ArrayList<Book> bookArrayList;
     private BookService     bookService;
 
-    private BooksFragmentContract.View booksFragmentView;
+    private BooksListContract.BooksFragmentView booksFragmentView;
 
-    public BooksFragmentPresenter(BooksFragmentContract.View booksFragmentView){
-        this.booksFragmentView = booksFragmentView;
-
-        bookArrayList = new ArrayList<Book>();
-        bookService = new BookService();
+    public BooksListPresenterImp(){
+        bookArrayList   = new ArrayList<Book>();
+        bookService     = new BookService();
     }
 
     @Override
@@ -88,4 +86,8 @@ public class BooksFragmentPresenter implements BooksFragmentContract.Presenter {
         booksFragmentView.booksEmpty(empty);
     }
 
+    @Override
+    public void setView(BooksListContract.BooksFragmentView view) {
+        this.booksFragmentView = view;
+    }
 }

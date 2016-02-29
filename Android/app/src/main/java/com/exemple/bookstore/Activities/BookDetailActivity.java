@@ -21,7 +21,7 @@ import android.widget.TextView;
 import com.exemple.bookstore.Contracts.BookDetailContract;
 import com.exemple.bookstore.Fragments.CommentsFragment;
 import com.exemple.bookstore.Models.Book;
-import com.exemple.bookstore.Presenters.BookDetailPresenter;
+import com.exemple.bookstore.Presenters.BookDetailPresenterImp;
 import com.exemple.bookstore.R;
 import com.exemple.bookstore.Utils.CircleTransform;
 import com.squareup.picasso.Picasso;
@@ -66,7 +66,7 @@ public class BookDetailActivity extends AppCompatActivity implements BookDetailC
 
         bookId = bundle.getInt("book_id");
 
-        bookPresenter = new BookDetailPresenter(this);
+        bookPresenter = new BookDetailPresenterImp(this);
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle(book.getTitle());
