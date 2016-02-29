@@ -1,15 +1,15 @@
 package com.exemple.bookstore.Presenters;
 
-import com.exemple.bookstore.Contracts.BookContract;
+import com.exemple.bookstore.Contracts.BookDetailContract;
 
 /**
  * Created by Jonathan on 28/02/2016.
  */
-public class BookPresenter implements BookContract.Presenter {
+public class BookDetailPresenter implements BookDetailContract.Presenter {
 
-    private BookContract.View bookView;
+    private BookDetailContract.View bookView;
 
-    public BookPresenter(BookContract.View bookView){
+    public BookDetailPresenter(BookDetailContract.View bookView){
         this.bookView = bookView;
 
         bookView.showBookDetail();

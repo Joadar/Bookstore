@@ -12,45 +12,40 @@ import android.widget.TextView;
 
 import com.exemple.bookstore.API.BookService;
 import com.exemple.bookstore.Adapters.BookRecyclerAdapter;
-import com.exemple.bookstore.Bus.BusProvider;
-import com.exemple.bookstore.Events.LoadBooksEvent;
-import com.exemple.bookstore.Events.SearchEvent;
+import com.exemple.bookstore.Contracts.BooksFragmentContract;
 import com.exemple.bookstore.Models.Book;
+import com.exemple.bookstore.Presenters.BooksFragmentPresenter;
 import com.exemple.bookstore.R;
-import com.squareup.otto.Subscribe;
 
 import java.util.ArrayList;
-import java.util.List;
-
-import retrofit.Callback;
-import retrofit.Response;
-import retrofit.Retrofit;
 
 /**
  * Created by Jonathan on 06/12/2015.
  */
 
 @SuppressWarnings("unchecked")
-public class BooksFragment extends Fragment {
+public class BooksFragment extends Fragment implements BooksFragmentContract.View {
 
     private BookService         bookService;
     private RecyclerView        booksRecycler;
 
-    private ArrayList<Book>     bookArrayList;
+    //private ArrayList<Book>     bookArrayList;
     private BookRecyclerAdapter bookRecyclerAdapter;
 
     private TextView            emptyMessage;
 
+    private BooksFragmentContract.Presenter booksFragmentPresenter;
+
     @Override
     public void onResume() {
         super.onResume();
-        BusProvider.getInstance().register(this);
+        //BusProvider.getInstance().register(this);
     }
 
     @Override
     public void onPause() {
         super.onPause();
-        BusProvider.getInstance().unregister(this);
+        //BusProvider.getInstance().unregister(this);
     }
 
     @Nullable
@@ -63,25 +58,28 @@ public class BooksFragment extends Fragment {
 
         bookService     = new BookService();
 
+        booksFragmentPresenter = new BooksFragmentPresenter(this);
+
         if(getArguments() != null){
 
             Bundle bundle = getArguments();
             Integer authorId = bundle.getInt("author_id");
 
             if(authorId != 0) {
-                getBooksFromAuthor(authorId);
+                booksFragmentPresenter.getBooksFromAuthor(authorId);
+
 
                 TextView bookLabel = (TextView) view.findViewById(R.id.book_label);
                 bookLabel.setText(getString(R.string.his_books));
             }
 
         } else {
-            getBooks();
+            booksFragmentPresenter.getBooks();
         }
 
         // books list
-        bookArrayList = new ArrayList<>();
-        bookRecyclerAdapter = new BookRecyclerAdapter(getContext(), bookArrayList);
+        //bookArrayList = new ArrayList<>();
+        //bookRecyclerAdapter = new BookRecyclerAdapter(getContext(), bookArrayList);
 
         LinearLayoutManager layoutManagerBook = new LinearLayoutManager(getContext());
         layoutManagerBook.setOrientation(LinearLayoutManager.HORIZONTAL);
@@ -92,8 +90,9 @@ public class BooksFragment extends Fragment {
         return view;
     }
 
-    private void booksOrNot(ArrayList<Book> books){
-        if(books.size() == 0){
+    @Override
+    public void booksEmpty(Boolean empty) {
+        if(empty){
             booksRecycler.setVisibility(View.GONE);
             emptyMessage.setVisibility(View.VISIBLE);
         } else {
@@ -102,55 +101,12 @@ public class BooksFragment extends Fragment {
         }
     }
 
-    private void getBooks(){
-        bookService.getBooks(new Callback<List<Book>>() {
-            @Override
-            public void onResponse(Response response, Retrofit retrofit) {
-                bookArrayList = (ArrayList<Book>) response.body();
-                BusProvider.getInstance().post(new LoadBooksEvent(bookArrayList));
-                booksOrNot(bookArrayList);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });
+    @Override
+    public void refreshBooksList(ArrayList<Book> bookArrayList) {
+        booksRecycler.setAdapter(new BookRecyclerAdapter(getContext(), bookArrayList));
     }
 
-    private void getBooksFromAuthor(int id){
-        bookService.getBooksByAuthor(id, new Callback<List<Book>>() {
-            @Override
-            public void onResponse(Response response, Retrofit retrofit) {
-                bookArrayList = (ArrayList<Book>) response.body();
-                BusProvider.getInstance().post(new LoadBooksEvent(bookArrayList));
-                booksOrNot(bookArrayList);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });
-    }
-
-    private void searchBooks(String title){
-        bookService.searchBooks(title, new Callback<List<Book>>() {
-            @Override
-            public void onResponse(Response response, Retrofit retrofit) {
-                bookArrayList = (ArrayList<Book>) response.body();
-                BusProvider.getInstance().post(new LoadBooksEvent(bookArrayList));
-                booksOrNot(bookArrayList);
-            }
-
-            @Override
-            public void onFailure(Throwable t) {
-
-            }
-        });
-    }
-
-    @Subscribe
+    /*@Subscribe
     public void onLoadBooksEvent(LoadBooksEvent event){
         booksRecycler.setAdapter(new BookRecyclerAdapter(getContext(), event.getListBooks()));
     }
@@ -162,5 +118,5 @@ public class BooksFragment extends Fragment {
         } else {
             getBooks();
         }
-    }
+    }*/
 }

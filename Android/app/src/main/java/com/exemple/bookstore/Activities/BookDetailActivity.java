@@ -18,15 +18,15 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.exemple.bookstore.Contracts.BookContract;
+import com.exemple.bookstore.Contracts.BookDetailContract;
 import com.exemple.bookstore.Fragments.CommentsFragment;
 import com.exemple.bookstore.Models.Book;
-import com.exemple.bookstore.Presenters.BookPresenter;
+import com.exemple.bookstore.Presenters.BookDetailPresenter;
 import com.exemple.bookstore.R;
 import com.exemple.bookstore.Utils.CircleTransform;
 import com.squareup.picasso.Picasso;
 
-public class BookActivity extends AppCompatActivity implements BookContract.View, View.OnClickListener {
+public class BookDetailActivity extends AppCompatActivity implements BookDetailContract.View, View.OnClickListener {
 
     private TextView bookTitle;
     private ImageView bookImage;
@@ -39,7 +39,7 @@ public class BookActivity extends AppCompatActivity implements BookContract.View
     private Toolbar toolbar;
     private Book book;
 
-    private BookContract.Presenter bookPresenter;
+    private BookDetailContract.Presenter bookPresenter;
 
     private GestureDetectorCompat mDetector;
 
@@ -66,7 +66,7 @@ public class BookActivity extends AppCompatActivity implements BookContract.View
 
         bookId = bundle.getInt("book_id");
 
-        bookPresenter = new BookPresenter(this);
+        bookPresenter = new BookDetailPresenter(this);
 
         toolbar = (Toolbar) findViewById(R.id.app_bar);
         toolbar.setTitle(book.getTitle());
@@ -141,7 +141,7 @@ public class BookActivity extends AppCompatActivity implements BookContract.View
 
     @Override
     public void goToAuthor() {
-        Intent intent = new Intent(this, AuthorActivity.class);
+        Intent intent = new Intent(this, AuthorDetailActivity.class);
         Bundle bundle = new Bundle();
         bundle.putInt("author_id", book.getAuthor().getId());
         bundle.putParcelable("author", book.getAuthor());

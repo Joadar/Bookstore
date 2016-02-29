@@ -18,9 +18,9 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-        <activity android:name=".Activities.AuthorActivity">
+        <activity android:name=".Activities.AuthorDetailActivity">
         </activity>
-        <activity android:name=".Activities.BookActivity">
+        <activity android:name=".Activities.BookDetailActivity">
         </activity>
     </application>
 

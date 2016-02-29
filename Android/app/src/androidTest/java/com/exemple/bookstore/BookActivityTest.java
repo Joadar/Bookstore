@@ -3,7 +3,7 @@ package com.exemple.bookstore;
 import android.test.ActivityInstrumentationTestCase2;
 import android.test.suitebuilder.annotation.LargeTest;
 
-import com.exemple.bookstore.Activities.BookActivity;
+import com.exemple.bookstore.Activities.BookDetailActivity;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -14,10 +14,10 @@ import static android.support.test.espresso.matcher.ViewMatchers.isDisplayed;
 import static android.support.test.espresso.matcher.ViewMatchers.withId;
 
 @LargeTest
-public class BookActivityTest extends ActivityInstrumentationTestCase2<BookActivity> {
+public class BookActivityTest extends ActivityInstrumentationTestCase2<BookDetailActivity> {
 
     public BookActivityTest() {
-        super(BookActivity.class);
+        super(BookDetailActivity.class);
     }
 
     @Before

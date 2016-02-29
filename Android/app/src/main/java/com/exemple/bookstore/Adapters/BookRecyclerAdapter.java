@@ -9,7 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
-import com.exemple.bookstore.Activities.BookActivity;
+import com.exemple.bookstore.Activities.BookDetailActivity;
 import com.exemple.bookstore.Models.Book;
 import com.exemple.bookstore.R;
 import com.squareup.picasso.Picasso;
@@ -67,7 +67,7 @@ public class BookRecyclerAdapter extends RecyclerView.Adapter<BookRecyclerAdapte
 
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(context, BookActivity.class);
+            Intent intent = new Intent(context, BookDetailActivity.class);
             Bundle bundle = new Bundle();
             bundle.putInt("book_id", bookArrayList.get(getAdapterPosition()).getId());
             bundle.putParcelable("book", bookArrayList.get(getAdapterPosition()));

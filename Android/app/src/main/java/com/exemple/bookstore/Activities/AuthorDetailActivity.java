@@ -14,7 +14,7 @@ import com.exemple.bookstore.Fragments.BooksFragment;
 import com.exemple.bookstore.Models.Author;
 import com.exemple.bookstore.R;
 
-public class AuthorActivity extends AppCompatActivity {
+public class AuthorDetailActivity extends AppCompatActivity {
 
     private Toolbar toolbar;
     private Author author;

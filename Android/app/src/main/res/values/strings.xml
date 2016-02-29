@@ -9,14 +9,14 @@
     <string name="emptyAuthors">There is no authors on your search</string>
     <string name="emptyComments">There is no comments on the books searched</string>
 
-    <!-- BookActivity -->
+    <!-- BookDetailActivity -->
     <string name="author">Author</string>
     <string name="published">Published</string>
     <string name="pages">Pages</string>
     <string name="description">Description</string>
     <string name="book_image">Book image</string>
 
-    <!-- AuthorActivity -->
+    <!-- AuthorDetailActivity -->
     <string name="his_books">His books</string>
     <string name="author_image">Author image</string>
 

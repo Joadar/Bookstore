@@ -10,7 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.exemple.bookstore.Activities.AuthorActivity;
+import com.exemple.bookstore.Activities.AuthorDetailActivity;
 import com.exemple.bookstore.Models.Author;
 import com.exemple.bookstore.R;
 import com.exemple.bookstore.Utils.Tools;
@@ -79,7 +79,7 @@ public class AuthorRecyclerAdapter extends RecyclerView.Adapter<AuthorRecyclerAd
 
             Tools.saveToPreferences(context, "AuthorPosition", String.valueOf(getAdapterPosition()));
 
-            Intent intent = new Intent(context, AuthorActivity.class);
+            Intent intent = new Intent(context, AuthorDetailActivity.class);
             Bundle bundle = new Bundle();
             bundle.putInt("author_id", authorArrayList.get(getAdapterPosition()).getId());
             bundle.putParcelable("author", authorArrayList.get(getAdapterPosition()));

@@ -3,7 +3,7 @@ package com.exemple.bookstore.Contracts;
 /**
  * Created by Jonathan on 28/02/2016.
  */
-public interface BookContract {
+public interface BookDetailContract {
 
     interface View {
 
